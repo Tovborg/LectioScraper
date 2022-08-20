@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to LectioScraper’s documentation! &mdash; lectioscraper 0.0.2 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> lectioscraper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Welcome to LectioScraper’s documentation!</a></li>
+<li><a class="reference internal" href="#getting-help">Getting help</a></li>
+<li><a class="reference internal" href="#quick-start">Quick start</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">lectioscraper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Welcome to LectioScraper’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-lectioscraper-s-documentation">
+<h1>Welcome to LectioScraper’s documentation!<a class="headerlink" href="#welcome-to-lectioscraper-s-documentation" title="Permalink to this heading"></a></h1>
+<img alt="_images/twitter_header_photo_2.png" class="align-left" src="_images/twitter_header_photo_2.png" />
+<p>LectioScraper is a python package for helping you scrape lectio.dk with ease. It uses requests for the actual scraping and beautifulsoup for parsing the html. Scraping lectio.dk can be a tedious task, as it requires so much different html elements to be parsed. and lectio is a big website so there are a lot of different pages to scrape. Here you have everything configured and all you need to do is to import lectioscraper and start scraping (see the whole documentation below).</p>
+</section>
+<section id="getting-help">
+<h1>Getting help<a class="headerlink" href="#getting-help" title="Permalink to this heading"></a></h1>
+<p>If you have any problems with the documentation or with the code, please feel free to contact me on my email, discord or open an issue on github. (see below).</p>
+<p>e-mail: <span class="raw-html"><a href="mailto: emil@tovborg-jensen.dk">emil@tovborg-jensen.dk</a></span>
+<span class="raw-html"><br></span>
+discord: Tovborg#7914
+<span class="raw-html"><br></span>
+github: <span class="raw-html"><a href="https://github.com/Tovborg/LectioScraper" target="_blank">Lectioscraper github</a></span></p>
+</section>
+<section id="quick-start">
+<h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h1>
+<p>You can install lectioscraper with pip:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">lectioscraper</span>
+</pre></div>
+</div>
+<p>and for installing a specific version using pip:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">lectioscraper</span><span class="o">==</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>After installing lectioscraper you need to import the Lectio class and create an instance of the class with your login details</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lectioscraper</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">lectioscraper</span><span class="o">.</span><span class="n">Lectio</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">schoolId</span><span class="p">)</span>
+
+<span class="c1"># after importing you can start scraping with the client object, see below for all functions</span>
+
+<span class="c1"># Example:</span>
+<span class="c1"># Scrape all classes for the current week</span>
+<span class="n">client</span><span class="o">.</span><span class="n">getSchedule</span><span class="p">(</span><span class="n">to_json</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When initializing the client you can pass the following arguments: username, password, and a so called schoolId that is found by going to your school’s page on lectio.dk and looking at the url.</p>
+<p>Example:</p>
+<p><a class="reference external" href="https://www.lectio.dk/lectio/59/default.aspx">https://www.lectio.dk/lectio/59/default.aspx</a></p>
+<p>here the schoolId is 59, the schoolid will always be after /lectio/</p>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.__init__">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SchoolId</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the class with the username, password and school id.
+Init is not made to be used directly, but is used when you create an instance of the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Username</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The username of the student.</p></li>
+<li><p><strong>Password</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The password of the student.</p></li>
+<li><p><strong>SchoolId</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The school id of the student.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Will return an error if the username, password or school id is not provided or if login fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getAbsence">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAbsence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">written_assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAbsence" title="Permalink to this definition"></a></dt>
+<dd><p>getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>written_assignments</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the absence for written assignments will be scraped.</p></li>
+<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the absence will be saved to a json file called absence.json</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns the absence for the student in different classes for the whole year.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getAllHomework">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAllHomework</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAllHomework" title="Permalink to this definition"></a></dt>
+<dd><p>getAllHomework scrapes all the homework in the ‘lektier’ tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the homework will be saved to a json file called homework.json.</p></li>
+<li><p><strong>print_to_console</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the homework will be printed to the console.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns all the homework in the ‘lektier’ either as a json file or as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getAssignments">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAssignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">team</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">hold'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">status'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fravaer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">karakter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAssignments" title="Permalink to this definition"></a></dt>
+<dd><p>getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_json</strong> – if true, the assignments will be saved to a json file called assignments.json.</p></li>
+<li><p><strong>team</strong> – the team you want to filter the assignments by. Example: 1g/3 EnB (english with team 1g/3), the filters will be updated soon as it’s complicated atm.</p></li>
+<li><p><strong>status</strong> – the status you want to filter the assignments by. Example: Venter, Afleveret, Mangler</p></li>
+<li><p><strong>fravaer</strong> – the absence you want to filter the assignments by. Example: 100% fravær, 50% fravær, 0% fravær</p></li>
+<li><p><strong>karakter</strong> – the grade you want to filter the assignments by. Example: 12, 10, 7, 4, 02, 00, -3</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns all the assignments in the ‘afleveringer’ either as a json file or as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getSchedule">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getSchedule" title="Permalink to this definition"></a></dt>
+<dd><p>getSchedule gets the schedule for the current week. Currently only works for the current week.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If true, the schedule will be saved to a json file.</p></li>
+<li><p><strong>print_to_console</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If true, the schedule will be printed to the console.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if to_json is true, the schedule will be saved to a json file. If to_json is false, the schedule will be returned. If print_to_console is true, the schedule will be printed to the console.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getTodaysSchedule">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getTodaysSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getTodaysSchedule" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>to_json</strong> – If true, the schedule will be saved to a json file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The schedule for the current day.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.getUnreadMessages">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getUnreadMessages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getUnreadMessages" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the unread messages for the current user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_json</strong> – If true, the messages will be saved to a json file.</p></li>
+<li><p><strong>get_content</strong> – If true, the content of the messages will be returned aka the message body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the unread messages for the current user, if get_content is true, the message body will be returned too</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="authors">
+<h1>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h1>
+<p>Lectioscraper is developed and maintained by Emil Tovborg-Jensen.</p>
+<blockquote>
+<div><p><span class="raw-html"><a href="https://github.com/Tovborg?tab=repositories" target="_blank">Github: Tovborg</a></span></p>
+</div></blockquote>
+</section>
+<section id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h1>
+<p>lectioscraper is licensed under the GNU General Public License v3.0. You are free to modify and distribute as long as you give credit to the original author.</p>
+<p>You can find the full license text either in the LICENSE file or on the following link:</p>
+<blockquote>
+<div><p><span class="raw-html"><a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public License v3.0</a></span></p>
+</div></blockquote>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Emil Tovborg-Jensen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

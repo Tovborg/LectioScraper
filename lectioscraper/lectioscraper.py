@@ -7,9 +7,21 @@ import datetime
 import os
 import time
 import pytz
-
+from typing import *
 class Lectio:
-    def __init__(self, Username, Password, SchoolId):
+    def __init__(self, Username:str, Password:str, SchoolId:str):
+        """
+        Initializes the class with the username, password and school id.
+        Init is not made to be used directly, but is used when you create an instance of the class.
+        
+        :param Username: The username of the student.
+        
+        :param Password: The password of the student.
+        
+        :param SchoolId: The school id of the student.
+        
+        :return: Will return an error if the username, password or school id is not provided or if login fails.
+        """
         self.Username = Username
         self.Password = Password
         self.SchoolId = str(SchoolId)
@@ -35,7 +47,6 @@ class Lectio:
         }
         
         result = session.post(LOGIN_URL, data=payload, headers=dict(referer=LOGIN_URL))
-        
         dashboard = session.get("https://www.lectio.dk/lectio/" + self.SchoolId + "/forside.aspx")
         soup = BeautifulSoup(dashboard.text, features="html.parser")
         studentIdFind = soup.find("a", {"id": "s_m_HeaderContent_subnavigator_ctl01"}, href=True)
@@ -53,7 +64,17 @@ class Lectio:
             # print("Student id: " + self.studentId)
             # print("School id: " + self.SchoolId)
 
-    def getSchedule(self, to_json=False, print_to_console=True):
+    def getSchedule(self, to_json:bool, print_to_console:bool=False):
+        """
+        getSchedule gets the schedule for the current week. Currently only works for the current week.
+        
+        :param to_json: If true, the schedule will be saved to a json file.
+        
+        :param print_to_console: If true, the schedule will be printed to the console.
+        
+        :return: if to_json is true, the schedule will be saved to a json file. If to_json is false, the schedule will be returned. If print_to_console is true, the schedule will be printed to the console.
+        """
+        
         SCHEDULE_URL = "https://www.lectio.dk/lectio/" + self.SchoolId + "/SkemaNy.aspx?type=elev&elevid=" + self.studentId
         
         schedule = self.Session.get(SCHEDULE_URL)
@@ -205,12 +226,21 @@ class Lectio:
             boolean = False
         return fullSchedule
     
-    def getAbsence(self, writing=False, to_json=False):
+    def getAbsence(self, written_assignments:bool, to_json:bool):
+        """
+        getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json.
+        
+        :param written_assignments: if true, the absence for written assignments will be scraped.
+        :param to_json: if true, the absence will be saved to a json file called absence.json
+        
+        :return: returns the absence for the student in different classes for the whole year.
+        """
+
         if type(to_json) is not bool:
             print("to_json parameter must be a boolean")
             exit()
-        if type(writing) is not bool:
-            print("to_json parameter must be a boolean")
+        if type(written_assignments) is not bool:
+            print("written_assignments parameter must be a boolean")
             exit()
         ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx?elevid={}&prevurl=forside.aspx".format(self.SchoolId, self.studentId)
         absence = self.Session.get(ABSENCE_URL)
@@ -218,14 +248,9 @@ class Lectio:
         absence_table = soup.find("table", {"id": "s_m_Content_Content_SFTabStudentAbsenceDataTable"})
         absence_rows = absence_table.findAll("tr")
 
+    
+    
         
-        """
-        Dictionary output consists of the following:
-        {
-            {"team": "1g meC/2", "opgjort": {"procent": "0", "moduler": "0/5"}, "for_the_year": {"procent": "0", "moduler": "0/5"}},
-            {"team": "1g meC/2", "opgjort": {"procent": "0", "moduler": "0/5"}, "for_the_year": {"procent": "0", "moduler": "0/5"}},
-        }
-        """
         absence_end_result = []
         
         for i in absence_rows:
@@ -234,7 +259,7 @@ class Lectio:
             for j in data:
                 absence.append(j.text)
             # print(absence)
-            if writing is False:
+            if written_assignments is False:
                 if len(absence) == 9:
                     absence_end_result.append({"team": absence[0], "opgjort": {"procent": absence[1], "moduler": absence[2]}, "for_the_year": {"procent": absence[3], "moduler": absence[4]}})
             else:
@@ -251,7 +276,16 @@ class Lectio:
             print("Please only provide boolean values in the to_json parameter")
         return absence_end_result
     
-    def getAllHomework(self, to_json=False, print_to_console=True):
+    def getAllHomework(self, to_json:bool, print_to_console:bool):
+        """
+        getAllHomework scrapes all the homework in the 'lektier' tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab.
+    
+        :param to_json: if true, the homework will be saved to a json file called homework.json.
+        :param print_to_console: if true, the homework will be printed to the console.
+        
+        :return: returns all the homework in the 'lektier' either as a json file or as a dictionary.
+    
+        """
         HOMEWORK_URL = "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx?elevid={}".format(self.SchoolId, self.studentId)
         homework = self.Session.get(HOMEWORK_URL)
         soup = BeautifulSoup(homework.text, features="html.parser")
@@ -308,6 +342,17 @@ class Lectio:
             return homework_end_result
         
     def getAssignments(self, to_json=False, team="alle hold", status="alle status", fravaer="", karakter=""):
+        """
+        getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments.
+        
+        :param to_json: if true, the assignments will be saved to a json file called assignments.json.
+        :param team: the team you want to filter the assignments by. Example: 1g/3 EnB (english with team 1g/3), the filters will be updated soon as it's complicated atm.
+        :param status: the status you want to filter the assignments by. Example: Venter, Afleveret, Mangler
+        :param fravaer: the absence you want to filter the assignments by. Example: 100% fravær, 50% fravær, 0% fravær
+        :param karakter: the grade you want to filter the assignments by. Example: 12, 10, 7, 4, 02, 00, -3
+
+        :return: returns all the assignments in the 'afleveringer' either as a json file or as a dictionary.
+        """
         ASSIGNMENT_URL = "https://www.lectio.dk/lectio/{}/OpgaverElev.aspx?elevid={}".format(self.SchoolId, self.studentId)
         assignments = self.Session.get(ASSIGNMENT_URL)
         soup = BeautifulSoup(assignments.text, features="html.parser")
@@ -402,7 +447,13 @@ class Lectio:
         return filterAssignments(assignment_end_result, team, status, fravaer, karakter)
     
     def getTodaysSchedule(self, to_json=False):
+        """
+        Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over.
+    
+        :param to_json: If true, the schedule will be saved to a json file.
         
+        :return: The schedule for the current day.
+        """
         todays_schedule = {}
         date_today = datetime.date.today()
         schedule = self.getSchedule(to_json=False, print_to_console=False)
@@ -433,7 +484,16 @@ class Lectio:
                 print("Please only provide boolean value for to_json")
                 return None
     
-    def getUnreadMessages(self, to_json=False, get_content=False, mark_as_read=False):
+    def getUnreadMessages(self, to_json=False, get_content=False):
+        """
+        Returns the unread messages for the current user.
+        
+        :param to_json: If true, the messages will be saved to a json file.
+        :param get_content: If true, the content of the messages will be returned aka the message body.
+        
+        :return: Returns the unread messages for the current user, if get_content is true, the message body will be returned too
+        """
+        
         messages = self.Session.get("https://www.lectio.dk/lectio/{}/beskeder2.aspx?type=&elevid={}&selectedfolderid=-70".format(self.SchoolId, self.studentId))
         soup = BeautifulSoup(messages.text, "html.parser")
         unread_messages = soup.find_all("tr", {"class": "unread"})
@@ -508,13 +568,13 @@ class Lectio:
             
             
             if to_json is False:
-                
                 return unr_messages
             else:
                 with open('unread_messages.json', 'w') as outfile:
                     json.dump(unr_messages, outfile, indent=4)
                 return unr_messages
-            
+
+
             
     
                 
