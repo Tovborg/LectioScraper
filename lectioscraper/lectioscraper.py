@@ -183,5 +183,3 @@ class Lectio:
             
     
 
-client = Lectio("emil763x", "xf96G?YteTYqEA#A", "59")
-print(client.getUnreadMessages(to_json=True, get_content=True))
