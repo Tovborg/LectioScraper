@@ -13,6 +13,8 @@ from getSchedule import get_schedule
 from getAbsence import get_absence
 from getAllHomework import get_all_homework
 from getAssignments import get_assignments
+from getTodaysSchedule import get_todays_schedule
+from getUnreadMessages import get_unread_messages
 
 class CustomFormatter(logging.Formatter):
 
@@ -162,39 +164,8 @@ class Lectio:
         
         :return: The schedule for the current day.
         """
-        todays_schedule = {}
-        date_today = datetime.date.today()
-        schedule = self.getSchedule(to_json=False, print_to_console=False)
-        # print(schedule)
-        for i in schedule:
-            
-            date = i["Date"]
-            # convert date to datetime object
-            date = date.replace("/", "-")
-            date = datetime.datetime.strptime(date, "%d-%m-%Y")
-            # remove time from date
-            date = date.date()
-            if date == date_today:
-                # add todays schedule to dictionary
-                todays_schedule[i["Id"]] = i
+        return get_todays_schedule(Session=self.Session, SchoolId=self.SchoolId, studentId=self.studentId, to_json=to_json)
         
-        
-                
-        if len(todays_schedule) == 0:
-            logging.info('No schedule found for today')
-            return "No schedule found for today"
-        
-        
-       
-        if to_json is False:
-            return todays_schedule
-        elif to_json is True:
-            with open('todays_schedule.json', 'w') as outfile:
-                json.dump(todays_schedule, outfile, indent=4)
-            return schedule
-        else:
-            logging.warning('Please only provide boolean value for to_json')
-            return "Please only provide boolean value for to_json"
     
     def getUnreadMessages(self, to_json=False, get_content=False):
         """
@@ -205,90 +176,12 @@ class Lectio:
         
         :return: Returns the unread messages for the current user, if get_content is true, the message body will be returned too
         """
-        
-        messages = self.Session.get("https://www.lectio.dk/lectio/{}/beskeder2.aspx?type=&elevid={}&selectedfolderid=-70".format(self.SchoolId, self.studentId))
-        soup = BeautifulSoup(messages.text, "html.parser")
-        unread_messages = soup.find_all("tr", {"class": "unread"})
-        if len(unread_messages) == 0:
-            logging.info('No unread messages found')
-            return None
-        else:
-            unr_messages = {}
-            for i in unread_messages:
-                td = i.find_all("td")
-                useful_data = []
-                for j in td:
-                    if j.text != "":
-                        useful_data.append(j.text.strip("\n"))
-                
-        
-                if get_content is False:
-                    
-                    unr_messages[useful_data[0]] = {
-                        "title": useful_data[0],
-                        "latest_message_sender": useful_data[1],
-                        "first_message_sender": useful_data[2],
-                        "to": useful_data[3],
-                        "day_and_date": useful_data[4],
-                        "date": useful_data[4][3::]
-                    }
-                elif get_content is True:
-                    postback_id = i.find("div", {"class": "buttonlink"}).find("a")["onclick"].split("'")[3].split("_")[3]
-                    url = "https://www.lectio.dk/lectio/{}/beskeder2.aspx?type=showthread&elevid={}&selectedfolderid=-70&id={}".format(self.SchoolId, self.studentId, postback_id)
-                    content = self.Session.get(url)
-                    content_soup = BeautifulSoup(content.text, "html.parser")
-                    tables = content_soup.find("table", {"class": "ShowMessageRecipients"})
-                    recipient_rows = tables.findAll("tr")
-                    emne = recipient_rows[0].find("td", {"class": "textLeft"}).text
-                    emne = " ".join(emne.split())
-                    full_table = content_soup.find("table", {"class": "maxW showmessage2", "id": "printmessagearea"})
-                    recipient_table = full_table.find("table", {"class": "ShowMessageRecipients"})
-                    # only get the two first rows, the rest is the message
-                    recipient_rows = recipient_table.findAll("tr")[:3]
-                    afsender_tabel = recipient_rows[2].find("table", {"class": "maxWidth textTop"})
-                    afsender = afsender_tabel.findAll("tr")[0].find("span").text
-                    til = afsender_tabel.findAll("tr")[1].findAll("td")[2].text
-                    til = " ".join(til.split())
-                    message = full_table.find("ul", {"id": "s_m_Content_Content_ThreadList"}).find("div").text
-                    # convert all the danish characters to english
-                    message = message.replace("æ", "ae")
-                    message = message.replace("ø", "oe")
-                    message = message.replace("å", "aa")
-                    message = message.replace("Æ", "Ae")
-                    message = message.replace("Ø", "Oe")
-                    message = message.replace("Å", "Aa")
-                    message = message.replace("æ", "ae")
-                    message = message.replace("ø", "oe")
-                    message = message.replace("å", "aa")
-                    message = message.replace("Æ", "Ae")
-                    message = message.replace("Ø", "Oe")
-                    message = message.replace("Å", "Aa")
-                    message = message.strip("\n")
-                    message = message.strip("\r")
-                
-                
-                    unr_messages[useful_data[0]] = {
-                        "title": emne,
-                        "latest_message_sender": useful_data[1],
-                        "sender": afsender,
-                        "to": til,
-                        "content": message,
-                        "day_and_date": useful_data[4],
-                        "date": useful_data[4][3::]
-                    }
 
-            
-            
-            if to_json is False:
-                return unr_messages
-            else:
-                with open('unread_messages.json', 'w') as outfile:
-                    json.dump(unr_messages, outfile, indent=4)
-                return unr_messages
+        return get_unread_messages(Session=self.Session, SchoolId=self.SchoolId, studentId=self.studentId, to_json=to_json, get_content=get_content)
 
 
             
     
 
 client = Lectio("emil763x", "xf96G?YteTYqEA#A", "59")
-client.getAssignments(to_json=True, team="1g/3 MaB")
+print(client.getUnreadMessages(to_json=True, get_content=True))

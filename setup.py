@@ -4,7 +4,7 @@ import os
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-VERSION = '0.0.5.2'
+VERSION = '0.0.5.3'
 DESCRIPTION = 'A simple python package to scrape useful data from Lectio.dk'
 
 # Setting up
