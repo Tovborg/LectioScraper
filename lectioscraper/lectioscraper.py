@@ -8,6 +8,9 @@ import os
 import time
 import pytz
 from typing import *
+import logging
+
+
 class Lectio:
     def __init__(self, Username:str, Password:str, SchoolId:str):
         """
@@ -25,7 +28,7 @@ class Lectio:
         self.Username = Username
         self.Password = Password
         self.SchoolId = str(SchoolId)
-
+        initalized = False
         
         LOGIN_URL = "https://www.lectio.dk/lectio/{}/login.aspx".format(self.SchoolId)
         
@@ -54,12 +57,13 @@ class Lectio:
         # print(soup.prettify())    
 
         if (studentIdFind == None):
-            print("Forkerte login detaljer")
-            exit()
+            logging.warning("Login failed")
+            initalized = False
         else:
             self.studentId = (studentIdFind['href']).replace("/lectio/" + SchoolId + "/forside.aspx?elevid=", '')
 
             self.Session = session
+            initalized = True
             
             # print("Student id: " + self.studentId)
             # print("School id: " + self.SchoolId)
@@ -67,31 +71,32 @@ class Lectio:
     def getSchedule(self, to_json:bool, print_to_console:bool=False):
         """
         getSchedule gets the schedule for the current week. Currently only works for the current week.
-        
+
         :param to_json: If true, the schedule will be saved to a json file.
-        
+
         :param print_to_console: If true, the schedule will be printed to the console.
-        
+
         :return: if to_json is true, the schedule will be saved to a json file. If to_json is false, the schedule will be returned. If print_to_console is true, the schedule will be printed to the console.
         """
-        
+
         SCHEDULE_URL = "https://www.lectio.dk/lectio/" + self.SchoolId + "/SkemaNy.aspx?type=elev&elevid=" + self.studentId
-        
+
         schedule = self.Session.get(SCHEDULE_URL)
-        
+
         soup = BeautifulSoup(schedule.text, features="html.parser")
         # print(soup.prettify())
-        
+
         scheduleContainer = soup.findAll('a', {"class": "s2bgbox"})
-        
+
         fullSchedule = []
         Schedule = {}
-        
+
         # loop through the schedule and append the lessons to the fullSchedule list
         if (scheduleContainer != None):
             for schedule in scheduleContainer:
                 rows = schedule['data-additionalinfo'].split("\n")
-                timeStructure = re.compile('\d{2}/\d+-\d{4} \d{2}:\d{2} til \d{2}:\d{2}')
+                timeStructure = re.compile(
+                    r'(\d+)/(\d+)-(\d+) (\d+):(\d+) til (\d+):(\d+)')
                 teamStructure = re.compile('Hold: ')
                 teacherStructure = re.compile('Lærer.*: ')
                 roomStructure = re.compile('Lokale.*: ')
@@ -103,7 +108,7 @@ class Lectio:
                 elif "ProeveholdId" in schedule['href']:
                     lessonIdSplit1 = schedule['href'].split("ProeveholdId=")
                 else:
-                    print("Error")
+                    logging.warning('Error')
                     return False
                 
                 lessonIdSplit2 = lessonIdSplit1[1].split("&prevurl=")
@@ -213,18 +218,25 @@ class Lectio:
 
             elif to_json == False:
                 if print_to_console == True:
-                    
-                    print("Schedule not saved, but it will be returned (print it to log it to the console)")
+                    logging.info("Schedule not saved, but it will be returned (print it to log it to the console)")
                     return fullSchedule
                 else:
                     return fullSchedule
             else:
-                print("Please only provide boolean values in the to_json parameter")
-                exit()
+                logging.warning("Please only provide boolean values in the to_json parameter")
+                return None
         else:
-            print("No schedule found, please check your login details or see the readme")
+            logging.warning("No schedule found, please check your login details or see the readme")
             boolean = False
         return fullSchedule
+            
+            
+        
+        
+        
+
+        
+        
     
     def getAbsence(self, written_assignments:bool, to_json:bool):
         """
@@ -237,11 +249,11 @@ class Lectio:
         """
 
         if type(to_json) is not bool:
-            print("to_json parameter must be a boolean")
-            exit()
+            logging.warning('to_json parameter must be a boolean')
+            return "to_json parameter must be a boolean"
         if type(written_assignments) is not bool:
-            print("written_assignments parameter must be a boolean")
-            exit()
+            logging.warning('written_assignments parameter must be a boolean')
+            return "Must be a boolean"
         ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx?elevid={}&prevurl=forside.aspx".format(self.SchoolId, self.studentId)
         absence = self.Session.get(ABSENCE_URL)
         soup = BeautifulSoup(absence.text, features="html.parser")
@@ -271,9 +283,11 @@ class Lectio:
             with open('absence.json', 'w') as outfile:
                 json.dump(absence_end_result, outfile, indent=4)
         elif to_json == False:
-            print("Absence not saved, but it will be returned (print it to log it to the console)")
+            logging.info("Absence not saved, but it will be returned (print it to log it to the console)")
+            return absence_end_result
         else:
-            print("Please only provide boolean values in the to_json parameter")
+            logging.warning("Please only provide boolean values in the to_json parameter")
+            return "to_json parameter must be a boolean"
         return absence_end_result
     
     def getAllHomework(self, to_json:bool, print_to_console:bool):
@@ -432,10 +446,10 @@ class Lectio:
                         filtered_assignments[i["opgavetitel"]] = i
                 elif team == "alle hold" and status == "alle status" and fravaer == "" and karakter == "":
                     filtered_assignments[i["opgavetitel"]] = i
-            print(len(filtered_assignments))
+            # print(len(filtered_assignments))
             if len(filtered_assignments) == 0:
-                print("No assignments found with the given filters, please check your filters")
-                return None
+                logging.info('No assignments found with the given filters, please check your filters')
+                return "No assignments found with the given filters, please check your filters"
             else:
                 if to_json is False:
                     return filtered_assignments
@@ -468,21 +482,25 @@ class Lectio:
             date = date.date()
             if date == date_today:
                 # add todays schedule to dictionary
-                
                 todays_schedule[i["Id"]] = i
+        
+        
+                
         if len(todays_schedule) == 0:
-            print("No schedule found for today")
-            return None
+            logging.info('No schedule found for today')
+            return "No schedule found for today"
+        
+        
+       
+        if to_json is False:
+            return todays_schedule
+        elif to_json is True:
+            with open('todays_schedule.json', 'w') as outfile:
+                json.dump(todays_schedule, outfile, indent=4)
+            return schedule
         else:
-            if to_json is False:
-                return todays_schedule
-            elif to_json is True:
-                with open('todays_schedule.json', 'w') as outfile:
-                    json.dump(todays_schedule, outfile, indent=4)
-                return schedule
-            else:
-                print("Please only provide boolean value for to_json")
-                return None
+            logging.warning('Please only provide boolean value for to_json')
+            return "Please only provide boolean value for to_json"
     
     def getUnreadMessages(self, to_json=False, get_content=False):
         """
@@ -498,7 +516,7 @@ class Lectio:
         soup = BeautifulSoup(messages.text, "html.parser")
         unread_messages = soup.find_all("tr", {"class": "unread"})
         if len(unread_messages) == 0:
-            print("No unread messages found")
+            logging.info('No unread messages found')
             return None
         else:
             unr_messages = {}
@@ -577,8 +595,4 @@ class Lectio:
 
             
     
-                
-            
-        
-        
 
