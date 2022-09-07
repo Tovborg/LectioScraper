@@ -9,12 +9,12 @@ import time
 import pytz
 from typing import *
 import logging
-from getSchedule import get_schedule
-from getAbsence import get_absence
-from getAllHomework import get_all_homework
-from getAssignments import get_assignments
-from getTodaysSchedule import get_todays_schedule
-from getUnreadMessages import get_unread_messages
+from lectioscraper.getSchedule import get_schedule
+from lectioscraper.getAbsence import get_absence
+from lectioscraper.getAllHomework import get_all_homework
+from lectioscraper.getAssignments import get_assignments
+from lectioscraper.getTodaysSchedule import get_todays_schedule
+from lectioscraper.getUnreadMessages import get_unread_messages
 
 class CustomFormatter(logging.Formatter):
 
@@ -180,6 +180,5 @@ class Lectio:
         return get_unread_messages(Session=self.Session, SchoolId=self.SchoolId, studentId=self.studentId, to_json=to_json, get_content=get_content)
 
 
-            
-    
 
+    
