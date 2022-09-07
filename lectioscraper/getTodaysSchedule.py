@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from getSchedule import get_schedule
+from lectioscraper.getSchedule import get_schedule
 import json
 import re
 import datetime
