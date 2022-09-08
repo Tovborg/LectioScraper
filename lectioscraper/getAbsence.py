@@ -37,13 +37,7 @@ ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
 
 
-def get_absence(to_json, SchoolId, studentId, Session, written_assignments):
-    if type(to_json) is not bool:
-            logging.warning('to_json parameter must be a boolean')
-            return "to_json parameter must be a boolean"
-    if type(written_assignments) is not bool:
-        logging.warning('written_assignments parameter must be a boolean')
-        return "Must be a boolean"
+def get_absence(to_json:bool, SchoolId, studentId, Session, written_assignments:bool):
     ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx?elevid={}&prevurl=forside.aspx".format(SchoolId, studentId)
     absence = Session.get(ABSENCE_URL)
     soup = BeautifulSoup(absence.text, features="html.parser")
@@ -65,10 +59,8 @@ def get_absence(to_json, SchoolId, studentId, Session, written_assignments):
     if to_json == True:
         with open('absence.json', 'w') as outfile:
             json.dump(absence_end_result, outfile, indent=4)
-    elif to_json == False:
-        logging.info("Absence not saved, but it will be returned (print it to log it to the console)")
-        return absence_end_result
-    else:
-        logging.warning("Please only provide boolean values in the to_json parameter")
-        return "to_json parameter must be a boolean"
-    return absence_end_result
+        
+    if len(absence_end_result) == 0:
+        return "No absence found"
+    
+    return "Saved absence to absence.json" if to_json else absence_end_result

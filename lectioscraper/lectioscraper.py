@@ -50,6 +50,8 @@ ch.setFormatter(CustomFormatter())
 
 logger.addHandler(ch)
 
+
+
 class Lectio:
     def __init__(self, Username:str, Password:str, SchoolId:str):
         """
@@ -74,7 +76,14 @@ class Lectio:
         session = requests.Session()
         result = session.get(LOGIN_URL)
         tree = html.fromstring(result.text)
-        authenticity_token = list(set(tree.xpath("//input[@name='__EVENTVALIDATION']/@value")))[0]
+        try:
+            
+            authenticity_token = list(set(tree.xpath("//input[@name='__EVENTVALIDATION']/@value")))[0]
+        except IndexError:
+            logger.warning("Failed to get authenticity token, please check your school id or it's a bug in either lectioscraper or lectio, try again later or contact me")
+            # create an exit that wont break django or flask
+            
+        
         # print(authenticity_token)
 
         payload = {
@@ -96,13 +105,14 @@ class Lectio:
         # print(soup.prettify())    
 
         if (studentIdFind == None):
-            logging.warning("Login failed")
             initalized = False
         else:
             self.studentId = (studentIdFind['href']).replace("/lectio/" + SchoolId + "/forside.aspx?elevid=", '')
-
             self.Session = session
             initalized = True
+    
+    
+            
         
     def getSchedule(self, to_json:bool, print_to_console:bool=False):
         """
@@ -178,6 +188,7 @@ class Lectio:
         """
 
         return get_unread_messages(Session=self.Session, SchoolId=self.SchoolId, studentId=self.studentId, to_json=to_json, get_content=get_content)
+
 
 
 

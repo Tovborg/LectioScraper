@@ -90,6 +90,5 @@ def get_assignments(to_json, team, status, fravaer, karakter, Session, SchoolId,
     if to_json:
         with open("assignments.json", "w") as file:
             json.dump(filtered, file, indent=4)
-        return filtered
-    else:
-        return filtered
+    
+    return "Saved assignments to assignments.json" if to_json else filtered
