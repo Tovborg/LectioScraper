@@ -25,6 +25,10 @@ jobs:
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run pytest
         # go into the tests directory and run pytest
+        env:
+          LECTIO_USERNAME: ${{ secrets.LECTIO_USERNAME }}
+          LECTIO_PASSWORD: "${{ secrets.LECTIO_PASSWORD }}"
+          LECTIO_SCHOOL_ID: ${{ secrets.LECTIO_SCHOOL_ID }}
         run: |
           pip install pytest
           cd tests
