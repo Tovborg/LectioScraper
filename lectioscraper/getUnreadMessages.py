@@ -1,3 +1,5 @@
+
+import logging
 from bs4 import BeautifulSoup
 import json
 
@@ -37,7 +39,6 @@ def get_unread_messages(to_json, SchoolId, studentId, Session, get_content):
                 .split("'")[3]
                 .split("_")[3]
             )
-            print(postback_id)
             url = "https://www.lectio.dk/lectio/{}/beskeder2.aspx?type=showthread&elevid={}&selectedfolderid=-70&id={}".format(
                 SchoolId, studentId, postback_id
             )

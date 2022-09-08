@@ -1,13 +1,6 @@
-import re
 import requests
 from lxml import html
 from bs4 import BeautifulSoup
-import json
-import datetime
-import os
-import time
-import pytz
-from typing import *
 import logging
 from lectioscraper.getSchedule import get_schedule
 from lectioscraper.getAbsence import get_absence
@@ -25,9 +18,7 @@ class CustomFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     green = "\x1b[32;20m"
     reset = "\x1b[0m"
-    format = (
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    )
+    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"  # noqa: E501
 
     FORMATS = {
         logging.DEBUG: grey + format + reset,
@@ -58,7 +49,7 @@ logger.addHandler(ch)
 class Lectio:
     def __init__(self, Username: str, Password: str, SchoolId: str):
         """
-        Initializes the class with the username, password and school id.
+        Initializes the class with the username, password and school id. # noqa: E501
         Init is not to be used directly, but is used when you create an instance of the class.
 
         :param Username: The username of the student.
@@ -72,9 +63,10 @@ class Lectio:
         self.Username = Username
         self.Password = Password
         self.SchoolId = str(SchoolId)
-        initalized = False
 
-        LOGIN_URL = "https://www.lectio.dk/lectio/{}/login.aspx".format(self.SchoolId)
+        LOGIN_URL = "https://www.lectio.dk/lectio/{}/login.aspx".format(
+            self.SchoolId
+        )  # noqa: E501
 
         session = requests.Session()
         result = session.get(LOGIN_URL)
@@ -86,7 +78,7 @@ class Lectio:
             )[0]
         except IndexError:
             logger.warning(
-                "Failed to get authenticity token, please check your school id or it's a bug in either lectioscraper or lectio, try again later or contact me"
+                "Failed to get authenticity token, please check your school id or it's a bug in either lectioscraper or lectio, try again later or contact me"  # noqa: E501
             )
             # create an exit that wont break django or flask
 
@@ -103,7 +95,7 @@ class Lectio:
             "LectioPostbackId": "",
         }
 
-        result = session.post(LOGIN_URL, data=payload, headers=dict(referer=LOGIN_URL))
+        result = session.post(LOGIN_URL, data=payload, headers=dict(referer=LOGIN_URL))  # noqa: E501
         dashboard = session.get(
             "https://www.lectio.dk/lectio/" + self.SchoolId + "/forside.aspx"
         )
@@ -114,18 +106,19 @@ class Lectio:
         # print(studentIdFind)
         # print(soup.prettify())
 
-        if studentIdFind == None:
-            initalized = False
+        if studentIdFind is None:
+            logger.error(
+                "Login failed, please check your username and password"
+            )  # noqa: E501
         else:
             self.studentId = (studentIdFind["href"]).replace(
                 "/lectio/" + SchoolId + "/forside.aspx?elevid=", ""
             )
             self.Session = session
-            initalized = True
 
     def getSchedule(self, to_json: bool, print_to_console: bool = False):
         """
-        getSchedule gets the schedule for the current week. Currently only works for the current week.
+        getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501
 
         :param to_json: If true, the schedule will be saved to a json file.
 
@@ -143,7 +136,7 @@ class Lectio:
 
     def getAbsence(self, written_assignments: bool, to_json: bool):
         """
-        getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json.
+        getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json. # noqa: E501
 
         :param written_assignments: if true, the absence for written assignments will be scraped.
         :param to_json: if true, the absence will be saved to a json file called absence.json
@@ -160,7 +153,7 @@ class Lectio:
 
     def getAllHomework(self, to_json: bool, print_to_console: bool):
         """
-        getAllHomework scrapes all the homework in the 'lektier' tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab.
+        getAllHomework scrapes all the homework in the 'lektier' tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab. # noqa: E501
 
         :param to_json: if true, the homework will be saved to a json file called homework.json.
         :param print_to_console: if true, the homework will be printed to the console.
@@ -185,7 +178,7 @@ class Lectio:
         karakter="",
     ):
         """
-        getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments.
+        getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments. # noqa: E501
 
         :param to_json: if true, the assignments will be saved to a json file called assignments.json.
         :param team: the team you want to filter the assignments by. Example: 1g/3 EnB (english with team 1g/3), the filters will be updated soon as it's complicated atm.
@@ -208,7 +201,7 @@ class Lectio:
 
     def getTodaysSchedule(self, to_json=False):
         """
-        Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over.
+        Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over. # noqa: E501
 
         :param to_json: If true, the schedule will be saved to a json file.
 
@@ -223,7 +216,7 @@ class Lectio:
 
     def getUnreadMessages(self, to_json=False, get_content=False):
         """
-        Returns the unread messages for the current user.
+        Returns the unread messages for the current user. # noqa: E501
 
         :param to_json: If true, the messages will be saved to a json file.
         :param get_content: If true, the content of the messages will be returned aka the message body.
