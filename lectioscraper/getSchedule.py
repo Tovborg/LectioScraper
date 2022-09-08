@@ -123,5 +123,11 @@ def get_schedule(to_json, SchoolId, studentId, Session):
 
             fullSchedule[Schedule['Id']] = Schedule
             Schedule = {}
-        return fullSchedule
+        if to_json:
+            with open("schedule.json", "w") as f:
+                json.dump(fullSchedule, f, indent=4)
+        if len(fullSchedule) == 0:
+            logging.error("No schedule found")
+            return "No schedule found"
+        return "saved in schedule.json" if to_json else fullSchedule
     

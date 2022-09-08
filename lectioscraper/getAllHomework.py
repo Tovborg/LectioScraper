@@ -88,12 +88,14 @@ def get_all_homework(to_json, print_to_console, SchoolId, studentId, Session):
             "note": note.text,
             "lektie": lektieinfo.text,
         }
+    if len(lektier) == 0:
+        return "No homework found"
     if to_json:
         with open("homework.json", "w") as f:
             json.dump(lektier, f, indent=4)
     if print_to_console:
         print(json.dumps(lektier, indent=4))
-    return lektier
+    return "Saved homework to homework.json" if to_json else lektier
         
         
     
