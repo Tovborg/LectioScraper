@@ -4,18 +4,20 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # This is needed to import the module from the parent directory
 from lectioscraper import *
-client = Lectio("${{ secrets.LECTIO_USERNAME }}", "${{ secrets.LECTIO_PASSWORD }}", "${{ secrets.LECTIO_SCHOOL_ID }}")
+client = Lectio(os.environ["LECTIO_USERNAME"], os.environ["LECTIO_PASSWORD"], os.environ["LECTIO_SCHOOL_ID"])
+# create a client using secret variables
+
 
 
 def test_class_login_init():
     # Test if the class is initialized correctly
-    assert client.Username == "emil763x"
-    assert client.Password == "yApsCj@?8rQ&jMec"
-    assert client.SchoolId == "59"
+    assert client.Username == os.environ["LECTIO_USERNAME"]
+    assert client.Password == os.environ["LECTIO_PASSWORD"]
+    assert client.SchoolId == os.environ["LECTIO_SCHOOL_ID"]
     # Test that the the the class is initialized correctly
-    assert client.Username != "emil763x1"
-    assert client.Password != "yApsCj@?8rQ&jMec1"
-    assert client.SchoolId != "591"
+    assert client.Username != "emil762331x1"
+    assert client.Password != "yApsCj@?8rQ&jMec323221"
+    assert client.SchoolId != "5391"
 
     # check if self.studentid is not none
     assert client.studentId != None
