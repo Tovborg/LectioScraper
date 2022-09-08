@@ -26,6 +26,7 @@ jobs:
       - name: Run pytest
         # go into the tests directory and run pytest
         run: |
+          pip install pytest
           cd tests
           pytest pytest_test.py
 
