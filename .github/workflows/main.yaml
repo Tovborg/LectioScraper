@@ -32,7 +32,7 @@ jobs:
         run: |
           pip install pytest
           cd tests
-          pytest pytest_test.py
+          pytest lectioscraper_tests.py
 
       - name: Build and publish
         # only run this step if the previous steps were successful

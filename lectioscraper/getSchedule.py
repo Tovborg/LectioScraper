@@ -99,7 +99,9 @@ def get_schedule(to_json, SchoolId, studentId, Session):
             room = room[0].split(":")[1].strip()
 
         # .split(":")[2]
-        time_split = time.split(" ")
+        if time != " ":
+            time_split = time.split(" ")
+        
 
         if status == "Aflyst!":
             Schedule["Status"] = "Aflyst!"
@@ -115,8 +117,13 @@ def get_schedule(to_json, SchoolId, studentId, Session):
 
         Schedule["DateTime"] = time
         Schedule["Date"] = time_split[0].replace("/", "-")
-        Schedule["StartTime"] = time_split[1]
-        Schedule["EndTime"] = time_split[3]
+        if time != " ":
+            Schedule["StartTime"] = time_split[1]
+            Schedule["EndTime"] = time_split[3]
+        else:
+            Schedule["StartTime"] = " "
+            Schedule["EndTime"] = " "
+        
         Schedule["Team"] = team
         Schedule["Teacher"] = teacher
         Schedule["Room"] = room
