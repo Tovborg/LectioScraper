@@ -38,6 +38,7 @@ jobs:
         # only run this step if the previous steps were successful
         if: success()
         run: |
+          pip install wheel
           python setup.py sdist bdist_wheel
           twine upload dist/*
         env:
