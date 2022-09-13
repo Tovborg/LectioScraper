@@ -2,14 +2,14 @@ import requests
 from lxml import html
 from bs4 import BeautifulSoup
 import logging
-from getSchedule import get_schedule
-from getAbsence import get_absence
-from getAllHomework import get_all_homework
-from getAssignments import get_assignments
-from getTodaysSchedule import get_todays_schedule
-from getUnreadMessages import get_unread_messages
+from lectioscraper.getSchedule import get_schedule
+from lectioscraper.getAbsence import get_absence
+from lectioscraper.getAllHomework import get_all_homework
+from lectioscraper.getAssignments import get_assignments
+from lectioscraper.getTodaysSchedule import get_todays_schedule
+from lectioscraper.getUnreadMessages import get_unread_messages
 import re
-from lectioToCalendar import LecToCal
+from lectioscraper.lectioToCalendar import LecToCal
 class CustomFormatter(logging.Formatter):
 
     grey = "\x1b[38;20m"
