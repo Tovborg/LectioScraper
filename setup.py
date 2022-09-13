@@ -4,7 +4,7 @@ import os
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-VERSION = '0.0.6.4'
+VERSION = '0.0.6.5'
 DESCRIPTION = 'A simple python package to scrape useful data from Lectio.dk'
 
 # Setting up
@@ -22,8 +22,9 @@ setup(
     download_url="https://pypi.org/project/lectioscraper/",
     install_requires=['beautifulsoup4', 'requests', 'lxml', 'pytz'],
     # make sure credentials.json is included in the package
-    package_data={'lectioscraper': ['credentials.json']},
-    include_package_data=True,
+    package_dir={'lectioscraper': 'lectioscraper'},
+    data_files=[('lectioscraper', ['lectioscraper/credentials.json'])],
+    
     keywords=['python', 'Lectio', 'Scraping', 'webscraping'],
 )
 
