@@ -8,6 +8,7 @@ VERSION = '0.0.6.8'
 DESCRIPTION = 'A simple python package to scrape useful data from Lectio.dk'
 
 # Setting up
+# find_packages() finds all the packages in the current directory s
 setup(
     name="lectioscraper",
     version=VERSION,
