@@ -2,14 +2,14 @@ import requests
 from lxml import html
 from bs4 import BeautifulSoup
 import logging
-from lectioscraper.getSchedule import get_schedule
-from lectioscraper.getAbsence import get_absence
-from lectioscraper.getAllHomework import get_all_homework
-from lectioscraper.getAssignments import get_assignments
-from lectioscraper.getTodaysSchedule import get_todays_schedule
-from lectioscraper.getUnreadMessages import get_unread_messages
-
-
+from getSchedule import get_schedule
+from getAbsence import get_absence
+from getAllHomework import get_all_homework
+from getAssignments import get_assignments
+from getTodaysSchedule import get_todays_schedule
+from getUnreadMessages import get_unread_messages
+import re
+from lectioToCalendar import LecToCal
 class CustomFormatter(logging.Formatter):
 
     grey = "\x1b[38;20m"
@@ -100,6 +100,18 @@ class Lectio:
             "https://www.lectio.dk/lectio/" + self.SchoolId + "/forside.aspx"
         )
         soup = BeautifulSoup(dashboard.text, features="html.parser")
+        insitutionFind = soup.find("div", {"class": "ls-master-header-institution"})
+        insitution = "  ".join(insitutionFind.text.split())
+        # split insitution at year/next year with only 2 digits
+        insitution = re.split(r"(\d{4}/\d{2})", insitution)[0]
+        # remove one whitespace between the names
+        insitution = insitution.replace("  ", " ")
+        
+        # use google maps api to get the location of the school
+        # get the location of the school
+        maps_api_key = "AIzaSyAYrJzW_kIagSRVKIxmxbrmVI6W1T4W6jw"
+        res = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(insitution, maps_api_key)).json()["results"][0]
+        self.InstitutionAddress = res["formatted_address"]
         studentIdFind = soup.find(
             "a", {"id": "s_m_HeaderContent_subnavigator_ctl01"}, href=True
         )
@@ -231,3 +243,16 @@ class Lectio:
             to_json=to_json,
             get_content=get_content,
         )
+        
+    def addToGoogleCalendar(self, CalendarID:str, user_type:str):
+        """
+        Adds the schedule for the current week to a Google Calendar. # noqa: E501
+
+        :param CalendarID: The ID of the calendar you want to add the schedule to.
+        :param user_type: The type of user, either 'student' or 'teacher'.
+
+        :return: Returns the schedule for the current week.
+        """
+        return LecToCal(self.Session, CalendarID, self.studentId, self.SchoolId, self.InstitutionAddress, user_type).send_to_google_calendar(12)
+
+

@@ -16,7 +16,7 @@ def test_class_login_init():
     assert client.SchoolId == os.environ["LECTIO_SCHOOL_ID"]
     # Test that the the the class is initialized correctly
     assert client.Username != "emil762331x1"
-    assert client.Password != "yApsCj@?8rQ&jMec323221"
+    assert client.Password != "saasafdfddySASDSSAadsApdasdsCjsdsa@?8rQ&"
     assert client.SchoolId != "5391"
 
     # check if self.studentid is not none
@@ -130,6 +130,8 @@ def test_getAllUnreadMessages():
         for i in unread_messages.keys():
             # make sure there is not a key called 'content'
             assert 'content' not in unread_messages[i].keys()
+            
+    
                 
     
     
