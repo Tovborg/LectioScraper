@@ -4,7 +4,7 @@ import os
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-VERSION = '0.0.8.0'
+VERSION = '0.0.8.1'
 DESCRIPTION = 'A simple python package to scrape useful data from Lectio.dk'
 
 # Setting up
@@ -21,7 +21,7 @@ setup(
     license="GNU General Public License v3.0",
     url="https://github.com/Tovborg/LectioScraper",
     download_url="https://pypi.org/project/lectioscraper/",
-    install_requires=['beautifulsoup4', 'requests', 'lxml', 'pytz', 'google-api-python-client', 'google-auth-httplib2', 'google-auth-oauthlib', 'oauth2client',  'google-auth-credentials'],
+    install_requires=['beautifulsoup4', 'requests', 'lxml', 'pytz', 'google-api-python-client', 'google-auth-httplib2', 'google-auth-oauthlib', 'oauth2client'],
     # credentials.json is located in the lectioscraper directory with all the other python files for the package. It is not included in the package. include it
     package_data={'lectioscraper': ['credentials.json']},
     include_package_data=True,
