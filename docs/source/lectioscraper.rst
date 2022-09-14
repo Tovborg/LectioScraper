@@ -23,7 +23,12 @@ Usage
 -----------------
 
 .. Automodule:: lectioscraper.Lectio
-    :members: __init__, getSchedule, getAbsence, getAllHomework
+    .. autoclass:: Lectio
+        :members:
+        :undoc-members:
+        :show-inheritance:
+        :exclude-members: __init__, __module__, __doc__, __weakref__, __dict__
+
 
 -----------------
 

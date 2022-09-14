@@ -116,8 +116,8 @@ github: <span class="raw-html"><a href="https://github.com/Tovborg/LectioScraper
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.__init__">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SchoolId</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes the class with the username, password and school id.
-Init is not made to be used directly, but is used when you create an instance of the class.</p>
+<dd><p>Initializes the class with the username, password and school id. # noqa: E501
+Init is not to be used directly, but is used when you create an instance of the class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -133,9 +133,27 @@ Init is not made to be used directly, but is used when you create an instance of
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="lectioscraper.Lectio.addToGoogleCalendar">
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">addToGoogleCalendar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CalendarID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weeks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.addToGoogleCalendar" title="Permalink to this definition"></a></dt>
+<dd><p>Adds the schedule for the current week to a Google Calendar. Accesses your calendar using OAuth2.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CalendarID</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The ID of the calendar you want to add the schedule to.</p></li>
+<li><p><strong>user_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The type of user, either ‘elev’ or ‘laerer’.</p></li>
+<li><p><strong>weeks</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of weeks you want to add to the calendar. (starting from the current week)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Adds the schedule for the current week to a Google Calendar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAbsence">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAbsence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">written_assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAbsence" title="Permalink to this definition"></a></dt>
-<dd><p>getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json.</p>
+<dd><p>getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -152,7 +170,7 @@ Init is not made to be used directly, but is used when you create an instance of
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAllHomework">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAllHomework</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAllHomework" title="Permalink to this definition"></a></dt>
-<dd><p>getAllHomework scrapes all the homework in the ‘lektier’ tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab.</p>
+<dd><p>getAllHomework scrapes all the homework in the ‘lektier’ tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -169,7 +187,7 @@ Init is not made to be used directly, but is used when you create an instance of
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAssignments">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAssignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">team</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">hold'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">status'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fravaer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">karakter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAssignments" title="Permalink to this definition"></a></dt>
-<dd><p>getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments.</p>
+<dd><p>getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -189,7 +207,7 @@ Init is not made to be used directly, but is used when you create an instance of
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getSchedule">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getSchedule" title="Permalink to this definition"></a></dt>
-<dd><p>getSchedule gets the schedule for the current week. Currently only works for the current week.</p>
+<dd><p>getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -206,7 +224,7 @@ Init is not made to be used directly, but is used when you create an instance of
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getTodaysSchedule">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getTodaysSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getTodaysSchedule" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over.</p>
+<dd><p>Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>to_json</strong> – If true, the schedule will be saved to a json file.</p>
@@ -220,7 +238,7 @@ Init is not made to be used directly, but is used when you create an instance of
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getUnreadMessages">
 <span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getUnreadMessages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getUnreadMessages" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the unread messages for the current user.</p>
+<dd><p>Returns the unread messages for the current user. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

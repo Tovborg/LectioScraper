@@ -70,7 +70,7 @@ Usage
 ============
 
 .. automodule:: lectioscraper.Lectio
-   :members: __init__, getSchedule, getAbsence, getAllHomework, getAssignments, getTodaysSchedule, getUnreadMessages
+   :members: __init__, getSchedule, getAbsence, getAllHomework, getAssignments, getTodaysSchedule, addToGoogleCalendar, getUnreadMessages
 
 
 Authors
