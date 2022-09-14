@@ -268,6 +268,8 @@ class LecToCal:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
+                # the credentials.json file is in the same directory as this file
+                location_of_this_file = os.path.dirname(os.path.abspath(__file__))
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)

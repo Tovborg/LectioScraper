@@ -2,14 +2,18 @@ import requests
 from lxml import html
 from bs4 import BeautifulSoup
 import logging
+import re
+
 from lectioscraper.getSchedule import get_schedule
 from lectioscraper.getAbsence import get_absence
 from lectioscraper.getAllHomework import get_all_homework
 from lectioscraper.getAssignments import get_assignments
 from lectioscraper.getTodaysSchedule import get_todays_schedule
 from lectioscraper.getUnreadMessages import get_unread_messages
-import re
 from lectioscraper.lectioToCalendar import LecToCal
+
+
+
 class CustomFormatter(logging.Formatter):
 
     grey = "\x1b[38;20m"
@@ -244,15 +248,16 @@ class Lectio:
             get_content=get_content,
         )
         
-    def addToGoogleCalendar(self, CalendarID:str, user_type:str):
+    def addToGoogleCalendar(self, CalendarID:str, user_type:str, weeks:int):
         """
-        Adds the schedule for the current week to a Google Calendar. # noqa: E501
+        Adds the schedule for the current week to a Google Calendar. Accesses your calendar using OAuth2.0. 
 
         :param CalendarID: The ID of the calendar you want to add the schedule to.
-        :param user_type: The type of user, either 'student' or 'teacher'.
-
-        :return: Returns the schedule for the current week.
+        :param user_type: The type of user, either 'elev' or 'laerer'.
+        :param weeks: The number of weeks you want to add to the calendar. (starting from the current week)
+        
+        :return: Adds the schedule for the current week to a Google Calendar.
         """
-        return LecToCal(self.Session, CalendarID, self.studentId, self.SchoolId, self.InstitutionAddress, user_type).send_to_google_calendar(12)
+        return LecToCal(self.Session, CalendarID, self.studentId, self.SchoolId, self.InstitutionAddress, user_type).send_to_google_calendar(weeks)
 
 
