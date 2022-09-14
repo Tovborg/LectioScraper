@@ -3,7 +3,7 @@ name: Deploy to pypi
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
         if: success()
         run: |
           pip install wheel
-          python setup.py sdist bdist_wheel
+          python setup.py sdist bdist_egg
           twine upload dist/*
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
