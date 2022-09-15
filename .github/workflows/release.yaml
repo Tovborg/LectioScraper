@@ -1,0 +1,44 @@
+name: Deploy to pypi
+
+on:
+  # run workflow when a new release is published
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run pytest
+        # go into the tests directory and run pytest
+        env:
+          LECTIO_USERNAME: ${{ secrets.LECTIO_USERNAME }}
+          LECTIO_PASSWORD: "${{ secrets.LECTIO_PASSWORD }}"
+          LECTIO_SCHOOL_ID: ${{ secrets.LECTIO_SCHOOL_ID }}
+        run: |
+          pip install pytest
+          cd tests
+          pytest lectioscraper_tests.py
+
+      - name: Build and publish
+        # only run this step if the previous steps were successful
+        if: success()
+        run: |
+          pip install wheel
+          python setup.py sdist bdist_egg
+          twine upload dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+  
+ 
+

@@ -4,9 +4,7 @@ import os
 import json
 import sched
 from urllib.error import HTTPError
-# import google calendar api
 from googleapiclient.discovery import build
-
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -18,10 +16,10 @@ import re
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 class LecToCal:
-    def __init__(self, Session, CalendarID, StudentId, SchoolId, schoolAddress, user_type):
+    def __init__(self, Session, CalendarID, StudentLaererId, SchoolId, schoolAddress, user_type):
         self.Session = Session
         self.CalendarID = CalendarID
-        self.StudentId = StudentId
+        self.StudentLaererId = StudentLaererId
         self.SchoolId = SchoolId
         self.schoolAddress = schoolAddress
         self.user_type = user_type
@@ -48,9 +46,9 @@ class LecToCal:
             week = current_week + week
             fullSchedule = {}
             if week > 52:
-                week = week - 52
+                week = week - 5
                 current_year = current_year + 1
-            SCHEDULE_FOR_WEEK_URL = f"https://www.lectio.dk/lectio/{self.SchoolId}/SkemaNy.aspx?type={self.user_type}&{self.user_type}id={self.StudentId}&week={week}{current_year}"  # noqa: E501
+            SCHEDULE_FOR_WEEK_URL = f"https://www.lectio.dk/lectio/{self.SchoolId}/SkemaNy.aspx?type={self.user_type}&{self.user_type}id={self.StudentLaererId}&week={week}{current_year}"  # noqa: E501
             schedule_for_week = self.Session.get(SCHEDULE_FOR_WEEK_URL)
             soup = BeautifulSoup(schedule_for_week.text, features="html.parser")
             scheduleContainer = soup.findAll("a", {"class": "s2bgbox"})
