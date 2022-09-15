@@ -22,7 +22,7 @@ def test_class_login_init():
     assert client.user_type != "laerer"
 
     # check if self.studentid is not none
-    assert client.studentId != None
+    assert client.studentLaererId != None
 
 def test_getSchedule():
     # Test that lectio has 'Session'
