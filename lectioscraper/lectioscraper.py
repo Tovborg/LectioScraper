@@ -12,46 +12,21 @@ from lectioscraper.getTodaysSchedule import get_todays_schedule
 from lectioscraper.getUnreadMessages import get_unread_messages
 from lectioscraper.lectioToCalendar import LecToCal
 
+# exceptions
+
+class LoginError(Exception):
+    """Raised when login fails"""
 
 
-class CustomFormatter(logging.Formatter):
+class ServerError(Exception):
+    # ! Need to figure out how to determine if this is a server error or a login error
+    """Raised when server returns an error"""
 
-    grey = "\x1b[38;20m"
-    yellow = "\x1b[33;20m"
-    red = "\x1b[31;20m"
-    bold_red = "\x1b[31;1m"
-    green = "\x1b[32;20m"
-    reset = "\x1b[0m"
-    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"  # noqa: E501
-
-    FORMATS = {
-        logging.DEBUG: grey + format + reset,
-        logging.INFO: green + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
-        logging.CRITICAL: bold_red + format + reset,
-    }
-
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
-        return formatter.format(record)
-
-
-logger = logging.getLogger("lectioscraper")
-logger.setLevel(logging.DEBUG)
-
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-ch.setFormatter(CustomFormatter())
-
-logger.addHandler(ch)
-
+# main class
 
 class Lectio:
-    def __init__(self, Username: str, Password: str, SchoolId: str):
+    def __init__(self, Username: str, Password: str, SchoolId: str, user_type: str):
+        # * ? Finished refactoring for also being able to scrape teachers Lectio
         """
         Initializes the class with the username, password and school id. # noqa: E501
         Init is not to be used directly, but is used when you create an instance of the class.
@@ -64,6 +39,11 @@ class Lectio:
 
         :return: Will return an error if the username, password or school id is not provided or if login fails.
         """
+        # make sure user_type is either 'elev' or 'laerer'
+        if user_type not in ["elev", "laerer"]:
+            raise ValueError(
+                "user_type must be either 'elev' or 'laerer', not {}".format(user_type)
+            )
         self.Username = Username
         self.Password = Password
         self.SchoolId = str(SchoolId)
@@ -81,13 +61,11 @@ class Lectio:
                 set(tree.xpath("//input[@name='__EVENTVALIDATION']/@value"))
             )[0]
         except IndexError:
-            logger.warning(
-                "Failed to get authenticity token, please check your school id or it's a bug in either lectioscraper or lectio, try again later or contact me"  # noqa: E501
+            # its either a valueerror or a server error
+            # raise an error not only if the school id is wrong, but also if the server is down
+            raise ValueError(
+                "School ID is wrong or the server is down, please try again later."
             )
-            # create an exit that wont break django or flask
-
-        # print(authenticity_token)
-
         payload = {
             "m$Content$username": self.Username,
             "m$Content$password": self.Password,
@@ -116,23 +94,26 @@ class Lectio:
         maps_api_key = "AIzaSyAYrJzW_kIagSRVKIxmxbrmVI6W1T4W6jw"
         res = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(insitution, maps_api_key)).json()["results"][0]
         self.InstitutionAddress = res["formatted_address"]
-        studentIdFind = soup.find(
+        student_laererIdFind = soup.find(
             "a", {"id": "s_m_HeaderContent_subnavigator_ctl01"}, href=True
         )
-        # print(studentIdFind)
-        # print(soup.prettify())
 
-        if studentIdFind is None:
-            logger.error(
-                "Login failed, please check your username and password"
-            )  # noqa: E501
+        if student_laererIdFind is None:
+            raise LoginError("Login failed, please check your username and password.")
         else:
-            self.studentId = (studentIdFind["href"]).replace(
-                "/lectio/" + SchoolId + "/forside.aspx?elevid=", ""
-            )
+            if user_type == "elev":
+                self.studentLaererId = (student_laererIdFind["href"]).replace(
+                    "/lectio/" + SchoolId + "/forside.aspx?elevid=", ""
+                )
+            elif user_type == "laerer":
+                self.studentLaererId = (student_laererIdFind["href"]).replace(
+                    "/lectio/" + SchoolId + "/forside.aspx?laererid=", ""
+                )
             self.Session = session
 
     def getSchedule(self, to_json: bool, print_to_console: bool = False):
+        # TODO: Make this function work for teachers
+        # ! If you make any changes to this function, make sure it integrates with addToGoogleCalendar function
         """
         getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501
 
@@ -146,11 +127,13 @@ class Lectio:
         return get_schedule(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             to_json=to_json,
         )
 
     def getAbsence(self, written_assignments: bool, to_json: bool):
+        # * ? Should I make this function work for teachers, since they can also see absence?
+        # * ? I don't know how the layout is for teachers, so I don't know if it will work
         """
         getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json. # noqa: E501
 
@@ -162,12 +145,14 @@ class Lectio:
         return get_absence(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             written_assignments=written_assignments,
             to_json=to_json,
         )
 
     def getAllHomework(self, to_json: bool, print_to_console: bool):
+        # * ? Should I make this function work for teachers, since they can also see homework?
+        # ? I don't know how the layout is for teachers, so I don't know if it will work
         """
         getAllHomework scrapes all the homework in the 'lektier' tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab. # noqa: E501
 
@@ -180,7 +165,7 @@ class Lectio:
         return get_all_homework(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             to_json=to_json,
             print_to_console=print_to_console,
         )
@@ -193,6 +178,8 @@ class Lectio:
         fravaer="",
         karakter="",
     ):
+        # * ? I know that the teachers can see assignments, but I don't know how the layout is for teachers, so I don't know if it will work
+        # ? Should I make this function work for teachers, since they can also see assignments?
         """
         getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments. # noqa: E501
 
@@ -207,7 +194,7 @@ class Lectio:
         return get_assignments(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             to_json=to_json,
             team=team,
             status=status,
@@ -216,6 +203,8 @@ class Lectio:
         )
 
     def getTodaysSchedule(self, to_json=False):
+        # TODO: Make this function work for teachers
+        # * ? I know that the teachers can see the schedule, but I don't know how the layout is for teachers, so I don't know if it will work
         """
         Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over. # noqa: E501
 
@@ -226,11 +215,13 @@ class Lectio:
         return get_todays_schedule(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             to_json=to_json,
         )
 
     def getUnreadMessages(self, to_json=False, get_content=False):
+        # TODO: Make this function work for teachers  
+        # * I'm assuming teachers layout is the same as students, so it should work
         """
         Returns the unread messages for the current user. # noqa: E501
 
@@ -243,12 +234,16 @@ class Lectio:
         return get_unread_messages(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentId,
+            studentId=self.studentLaererId,
             to_json=to_json,
             get_content=get_content,
         )
         
     def addToGoogleCalendar(self, CalendarID:str, user_type:str, weeks:int):
+        # TODO: Make this function work for teachers
+        # * ? I know that the teachers can see the schedule, but I don't know how the layout is for teachers, so I don't know if it will work
+        # ! This function relies heavily on getSchedule, so if getSchedule doesn't work, this function won't work eithe
+        # ! Make sure to update this function appropriately if getSchedule is updated
         """
         Adds the schedule for the current week to a Google Calendar. Accesses your calendar using OAuth2.0. 
 
@@ -258,6 +253,6 @@ class Lectio:
         
         :return: Adds the schedule for the current week to a Google Calendar.
         """
-        return LecToCal(self.Session, CalendarID, self.studentId, self.SchoolId, self.InstitutionAddress, user_type).send_to_google_calendar(weeks)
+        return LecToCal(self.Session, CalendarID, self.studentLaererId, self.SchoolId, self.InstitutionAddress, user_type).send_to_google_calendar(weeks)
 
 
