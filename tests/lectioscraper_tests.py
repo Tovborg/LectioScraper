@@ -14,10 +14,12 @@ def test_class_login_init():
     assert client.Username == os.environ["LECTIO_USERNAME"]
     assert client.Password == os.environ["LECTIO_PASSWORD"]
     assert client.SchoolId == os.environ["LECTIO_SCHOOL_ID"]
+    assert client.user_type == "elev"
     # Test that the the the class is initialized correctly
     assert client.Username != "emil762331x1"
     assert client.Password != "saasafdfddySASDSSAadsApdasdsCjsdsa@?8rQ&"
     assert client.SchoolId != "5391"
+    assert client.user_type != "laerer"
 
     # check if self.studentid is not none
     assert client.studentId != None
