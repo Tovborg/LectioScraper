@@ -47,7 +47,7 @@ class Lectio:
         self.Username = Username
         self.Password = Password
         self.SchoolId = str(SchoolId)
-
+        self.user_type = user_type
         LOGIN_URL = "https://www.lectio.dk/lectio/{}/login.aspx".format(
             self.SchoolId
         )  # noqa: E501
