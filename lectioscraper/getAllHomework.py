@@ -4,12 +4,9 @@ import re
 import logging
 
 
-def get_all_homework(to_json, print_to_console, SchoolId, studentId, Session):
-    HOMEWORK_URL = (
-        "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx?elevid={}".format(
-            SchoolId, studentId
-        )
-    )
+def get_all_homework(to_json, print_to_console, SchoolId, Session):
+    
+    HOMEWORK_URL = "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx".format(SchoolId)
     homework = Session.get(HOMEWORK_URL)
     soup = BeautifulSoup(homework.text, features="html.parser")
     lektierows = soup.find("table", {"class": "ls-table-layout1"}).find_all("tr")

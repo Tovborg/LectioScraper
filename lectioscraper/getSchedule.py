@@ -4,137 +4,90 @@ import logging
 import json
 
 
-def get_schedule(to_json, SchoolId, studentId, Session):
-    SCHEDULE_URL = (
-        "https://www.lectio.dk/lectio/"
-        + SchoolId
-        + "/SkemaNy.aspx?type=elev&elevid="
-        + studentId
-    )
+def get_schedule(to_json, SchoolId, Session):
+    # Lectio doesn't need studentId anymore
+    SCHEDULE_URL = "https://www.lectio.dk/lectio/{}/SkemaNy.aspx".format(SchoolId)
 
     schedule = Session.get(SCHEDULE_URL)
 
     soup = BeautifulSoup(schedule.text, features="html.parser")
-    # print(soup.prettify())
 
-    scheduleContainer = soup.findAll("a", {"class": "s2bgbox"})
-
-    Schedule = {}
-    fullSchedule = {}
-    # loop through the schedule and append the lessons to the fullSchedule list
-    if scheduleContainer is None:
-        logging.error("No schedule found")
-        return False
-
-    for schedule in scheduleContainer:
-        rows = schedule["data-additionalinfo"].split("\n")
-        timeStructure = re.compile(r"(\d+)/(\d+)-(\d+) (\d+):(\d+) til (\d+):(\d+)")
-        teamStructure = re.compile("Hold: ")
-        teacherStructure = re.compile("Lærer.*: ")
-        roomStructure = re.compile("Lokale.*: ")
-
-        # Getting the lesson id
-        # Get the lesson if normal
-        if "absid" in schedule["href"]:
-            lessonIdSplit1 = schedule["href"].split("absid=")
-        elif "ProeveholdId" in schedule["href"]:
-            lessonIdSplit1 = schedule["href"].split("ProeveholdId=")
-        else:
-            logging.warning("Error")
-            return False
-
-        lessonIdSplit2 = lessonIdSplit1[1].split("&prevurl=")
-        lessonId = lessonIdSplit2[0]
-
-        # Check if there is a status
-        if rows[0] == "Aflyst!" or rows[0] == "Ændret!":
-            # print("found a status: {}".format(rows[0]))
-
-            status = rows[0]
-
-            # Check if there is a title
-            if timeStructure.match(rows[1]):
-                # print("did not find a title")
-                title = " "
-            else:
-                # print("found a title: {}".format(rows[1]))
-                title = rows[1]
-
-        else:
-            # print("did not find any status")
-            status = " "
-
-            # Check if there is a title
-            if timeStructure.match(rows[0]):
-                # print("did not find a title")
-                title = " "
-            else:
-                # print("found a title: {}".format(rows[0]))
-                title = rows[0]
-
-        time = list(filter(timeStructure.match, rows))
-        team = list(filter(teamStructure.match, rows))
-        teacher = list(filter(teacherStructure.match, rows))
-        room = list(filter(roomStructure.match, rows))
-
-        # If list is empty (There is no room or teacher) then make list empty
-        if len(time) == 0:
-            time = " "
-        else:
-            time = time[0]
-
-        if len(team) == 0:
-            team = " "
-        else:
-            team = team[0].split(":")[1].strip()
-
-        if len(teacher) == 0:
-            teacher = " "
-        else:
-            teacher = teacher[0].split(":")[1].strip()
-
-        if len(room) == 0:
-            room = " "
-        else:
-            room = room[0].split(":")[1].strip()
-
-        # .split(":")[2]
-        if time != " ":
-            time_split = time.split(" ")
+    skema_table = soup.find("table", {"id": "s_m_Content_Content_SkemaNyMedNavigation_skema_skematabel"})
+    day_rows = skema_table.find_all("div", {"class": "s2skemabrikcontainer lec-context-menu-instance"})
+    date_rows = skema_table.find_all("tr", {"class": "s2dayHeader"})
+    dates = [date.text for date in date_rows[0].find_all("td")[1:]]
+    week_number = soup.find("tr", {"class": "s2weekHeader"}).text.strip()   
+    schedule = {}
+    for i in range(len(day_rows)):
+        day_row = day_rows[i]
+        skemabrikker = day_row.findAll("a", {"class": "s2skemabrik"})
+        skema = {}
+        # break after first iteration
         
+        for brik in skemabrikker:
+            input_string = brik['data-additionalinfo']
+            sections = re.split(r'\n\n+', input_string)
 
-        if status == "Aflyst!":
-            Schedule["Status"] = "Aflyst!"
-        elif status == "Ændret!":
-            Schedule["Status"] = "Aendret!"
-        else:
-            Schedule["Status"] = "Normal!"
+            # Extract status (Normal! if not ændret or aflyst)
+            info_section = sections[0]
+            if "Ændret!" in info_section:
+                status = "Ændret"
+            elif "Aflyst!" in info_section:
+                status = "Aflyst"
+            else:
+                status = "Normal"
+            
 
-        if title == " ":
-            Schedule["Title"] = "Ingen titel"
-        else:
-            Schedule["Title"] = title
+            # Use regular expressions to extract other fields
+            time_match = re.search(r'(\d+:\d+) - (\d+:\d+)', info_section)
+            start_time, end_time = time_match.groups() if time_match else ('', '')
 
-        Schedule["DateTime"] = time
-        Schedule["Date"] = time_split[0].replace("/", "-")
-        if time != " ":
-            Schedule["StartTime"] = time_split[1]
-            Schedule["EndTime"] = time_split[3]
-        else:
-            Schedule["StartTime"] = " "
-            Schedule["EndTime"] = " "
-        
-        Schedule["Team"] = team
-        Schedule["Teacher"] = teacher
-        Schedule["Room"] = room
-        Schedule["Id"] = lessonId
+            team_match = re.search(r'Hold: (.+)', info_section)
+            team = team_match.group(1) if team_match else ''
 
-        fullSchedule[Schedule["Id"]] = Schedule
-        Schedule = {}
+
+            teacher_match = re.search(r'Lærer: (.+)', info_section)
+            teacher = teacher_match.group(1) if teacher_match else ''
+
+            classroom_match = re.search(r'Lokale: (.+)', info_section)
+            classroom = classroom_match.group(1) if classroom_match else ''
+
+            # Extract Homework and Note sections
+            homework_section = sections[1] if len(sections) > 1 else ''
+            note_section = sections[2] if len(sections) > 2 else ''
+
+            # check if a class with the same team already exists in the schedule
+            if team in skema:
+                skema[str(team) + "2"] = {
+                    "status": status,
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "teacher": teacher,
+                    "classroom": classroom,
+                    "homework": homework_section.strip(),
+                    "note": note_section.strip()
+                }
+            
+            # Print the parsed information
+            else:
+                skema[team] = {
+                    "status": status,
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "teacher": teacher,
+                    "classroom": classroom,
+                    "homework": homework_section.strip(),
+                    "note": note_section.strip()
+                }
+
+        schedule[dates[i]] = skema
     if to_json:
-        with open("schedule.json", "w") as f:
-            json.dump(fullSchedule, f, indent=4)
-    if len(fullSchedule) == 0:
-        logging.error("No schedule found")
-        return "No schedule found"
-    return "saved in schedule.json" if to_json else fullSchedule
+        with open('schedule.json', 'w') as fp:
+            json.dump(schedule, fp, indent=4)
+    
+
+
+    
+        
+        
+        

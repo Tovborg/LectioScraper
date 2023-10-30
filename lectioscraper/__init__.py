@@ -5,7 +5,7 @@ from lectioscraper.getAbsence import get_absence
 from lectioscraper.getAllHomework import get_all_homework
 from lectioscraper.getAssignments import get_assignments
 from lectioscraper.getTodaysSchedule import get_todays_schedule
-from lectioscraper.getUnreadMessages import get_unread_messages
+from lectioscraper.getMessages import getMessages
 from lectioscraper.lectioToCalendar import LecToCal
 
 # export all function inside the Lectio class

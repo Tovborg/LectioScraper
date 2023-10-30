@@ -154,13 +154,10 @@ def filterAssignments(assignment_end_result, team, status, fravaer, karakter="")
 
 
 def get_assignments(
-    to_json, team, status, fravaer, karakter, Session, SchoolId, studentId
+    to_json, team, status, fravaer, karakter, Session, SchoolId
 ):
-    ASSIGNMENT_URL = (
-        "https://www.lectio.dk/lectio/{}/OpgaverElev.aspx?elevid={}".format(
-            SchoolId, studentId
-        )
-    )
+    ASSIGNMENT_URL = "https://www.lectio.dk/lectio/{}/OpgaverElev.aspx".format(SchoolId)
+    
     assignments = Session.get(ASSIGNMENT_URL)
     soup = BeautifulSoup(assignments.text, features="html.parser")
     assignment_table = soup.find(

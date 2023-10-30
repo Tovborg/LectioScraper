@@ -2,10 +2,10 @@ from bs4 import BeautifulSoup
 import json
 
 
-def get_absence(to_json: bool, SchoolId, studentId, Session, written_assignments: bool):
-    ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx?elevid={}&prevurl=forside.aspx".format(
-        SchoolId, studentId
-    )
+def get_absence(to_json: bool, SchoolId: str, Session, written_assignments: bool):
+    # The URL used for retrieving absence. Note: Might change over time
+    ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx".format(SchoolId)
+    
     absence = Session.get(ABSENCE_URL)
     soup = BeautifulSoup(absence.text, features="html.parser")
     absence_rows = soup.find(
@@ -43,7 +43,6 @@ def get_absence(to_json: bool, SchoolId, studentId, Session, written_assignments
     if to_json == True:
         with open("absence.json", "w") as outfile:
             json.dump(absence_end_result, outfile, indent=4)
-
     if len(absence_end_result) == 0:
         return "No absence found"
 

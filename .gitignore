@@ -3,7 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
+# Exclude test.py
+test.py
 *.so
 
 # Distribution / packaging

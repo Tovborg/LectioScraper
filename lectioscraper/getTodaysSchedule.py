@@ -5,10 +5,10 @@ import re
 import datetime
 
 
-def get_todays_schedule(to_json, Session, SchoolId, studentId):
+def get_todays_schedule(to_json, Session, SchoolId):
     date_today = datetime.date.today()
     schedule = get_schedule(
-        to_json=False, Session=Session, SchoolId=SchoolId, studentId=studentId
+        to_json=False, Session=Session, SchoolId=SchoolId
     )
     todays_schedule = {
         i: schedule[i]

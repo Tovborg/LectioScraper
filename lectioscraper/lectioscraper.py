@@ -9,7 +9,7 @@ from lectioscraper.getAbsence import get_absence
 from lectioscraper.getAllHomework import get_all_homework
 from lectioscraper.getAssignments import get_assignments
 from lectioscraper.getTodaysSchedule import get_todays_schedule
-from lectioscraper.getUnreadMessages import get_unread_messages
+from lectioscraper.getMessages import getMessages
 from lectioscraper.lectioToCalendar import LecToCal
 
 # exceptions
@@ -84,34 +84,24 @@ class Lectio:
         soup = BeautifulSoup(dashboard.text, features="html.parser")
         insitutionFind = soup.find("div", {"class": "ls-master-header-institution"})
         insitution = "  ".join(insitutionFind.text.split())
+        
         # split insitution at year/next year with only 2 digits
         insitution = re.split(r"(\d{4}/\d{2})", insitution)[0]
+        
         # remove one whitespace between the names
         insitution = insitution.replace("  ", " ")
         
-        # use google maps api to get the location of the school
-        # get the location of the school
-        maps_api_key = "AIzaSyAYrJzW_kIagSRVKIxmxbrmVI6W1T4W6jw"
-        res = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(insitution, maps_api_key)).json()["results"][0]
-        self.InstitutionAddress = res["formatted_address"]
         student_laererIdFind = soup.find(
             "a", {"id": "s_m_HeaderContent_subnavigator_ctl01"}, href=True
         )
-
+        
         if student_laererIdFind is None:
             raise LoginError("Login failed, please check your username and password.")
-        else:
-            if user_type == "elev":
-                self.studentLaererId = (student_laererIdFind["href"]).replace(
-                    "/lectio/" + SchoolId + "/forside.aspx?elevid=", ""
-                )
-            elif user_type == "laerer":
-                self.studentLaererId = (student_laererIdFind["href"]).replace(
-                    "/lectio/" + SchoolId + "/forside.aspx?laererid=", ""
-                )
-            self.Session = session
+        
+        self.Session = session
 
-    def getSchedule(self, to_json: bool, print_to_console: bool = False):
+    def getSchedule(self, to_json: bool):
+        # Fix in progress !!!
         # TODO: Make this function work for teachers
         # ! If you make any changes to this function, make sure it integrates with addToGoogleCalendar function
         """
@@ -127,11 +117,11 @@ class Lectio:
         return get_schedule(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
             to_json=to_json,
         )
 
     def getAbsence(self, written_assignments: bool, to_json: bool):
+        # Fixed !!!
         # * ? Should I make this function work for teachers, since they can also see absence?
         # * ? I don't know how the layout is for teachers, so I don't know if it will work
         """
@@ -145,12 +135,12 @@ class Lectio:
         return get_absence(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
             written_assignments=written_assignments,
             to_json=to_json,
         )
 
     def getAllHomework(self, to_json: bool, print_to_console: bool):
+        # Fixed !!!
         # * ? Should I make this function work for teachers, since they can also see homework?
         # ? I don't know how the layout is for teachers, so I don't know if it will work
         """
@@ -165,7 +155,6 @@ class Lectio:
         return get_all_homework(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
             to_json=to_json,
             print_to_console=print_to_console,
         )
@@ -178,6 +167,7 @@ class Lectio:
         fravaer="",
         karakter="",
     ):
+        # Fixed !!!
         # * ? I know that the teachers can see assignments, but I don't know how the layout is for teachers, so I don't know if it will work
         # ? Should I make this function work for teachers, since they can also see assignments?
         """
@@ -194,7 +184,6 @@ class Lectio:
         return get_assignments(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
             to_json=to_json,
             team=team,
             status=status,
@@ -202,7 +191,8 @@ class Lectio:
             karakter=karakter,
         )
 
-    def getTodaysSchedule(self, to_json=False):
+    def getTodaysSchedule(self, to_json=True):
+        # Fixed !!!
         # TODO: Make this function work for teachers
         # * ? I know that the teachers can see the schedule, but I don't know how the layout is for teachers, so I don't know if it will work
         """
@@ -215,11 +205,11 @@ class Lectio:
         return get_todays_schedule(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
             to_json=to_json,
         )
 
-    def getUnreadMessages(self, to_json=False, get_content=False):
+    def getMessages(self, save_to_json: bool = False):
+        # Needs to be fixed !!!
         # TODO: Make this function work for teachers  
         # * I'm assuming teachers layout is the same as students, so it should work
         """
@@ -231,12 +221,10 @@ class Lectio:
         :return: Returns the unread messages for the current user, if get_content is true, the message body will be returned too
         """
 
-        return get_unread_messages(
+        return getMessages(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            studentId=self.studentLaererId,
-            to_json=to_json,
-            get_content=get_content,
+            save_to_json=save_to_json,
         )
         
     def addToGoogleCalendar(self, CalendarID:str, user_type:str, weeks:int):
