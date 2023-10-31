@@ -2,99 +2,75 @@ from bs4 import BeautifulSoup
 import json
 import re
 import logging
-
+from collections import defaultdict
 
 def get_all_homework(to_json, SchoolId, Session):
-    
     HOMEWORK_URL = "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx".format(SchoolId)
     homework = Session.get(HOMEWORK_URL)
     soup = BeautifulSoup(homework.text, features="html.parser")
-    lektierows = soup.find("table", {"class": "ls-table-layout1"}).find_all("tr")
-    lektier = {}
-    for lektie in lektierows:
-        lektieinfo = lektie.find("td", {"class": "ls-homework"})
-        aktivitetcontainer = lektie.find_all("td", {"class": "textTop"})[0].find(
-            "a", {"class": "s2bgbox"}
-        )
-        note = lektie.find_all("td", {"class": "textTop"})[1]
-        rows = aktivitetcontainer["data-additionalinfo"].split("\n")
-        timeStructure = re.compile(r"(\d+)/(\d+)-(\d+) (\d+):(\d+) til (\d+):(\d+)")
-        teamStructure = re.compile("Hold: ")
-        teacherStructure = re.compile("Lærer.*: ")
-        roomStructure = re.compile("Lokale.*: ")
-        if "absid" in aktivitetcontainer["href"]:
-            lessonIdSplit1 = aktivitetcontainer["href"].split("absid=")
-        elif "ProeveholdId" in aktivitetcontainer["href"]:
-            lessonIdSplit1 = aktivitetcontainer["href"].split("ProeveholdId=")
-        else:
-            logging.warning("Error")
-            return False
-        lessonIdSplit2 = lessonIdSplit1[1].split("&prevurl=")
-        lessonId = lessonIdSplit2[0]
 
-        if rows[0] == "Aflyst!" or rows[0] == "Ændret!":
-            # print("found a status: {}".format(rows[0]))
+    homework_table = soup.find("div", {"id": "s_m_Content_Content_contentPnl"}).find("table")
+    homework_rows = homework_table.find_all("tr")
 
-            status = rows[0]
+    # Stores each value in a list fx. "fr 3/11": []
+    homework_json = defaultdict(list)
 
-            # Check if there is a title
-            if timeStructure.match(rows[1]):
-                # print("did not find a title")
-                title = " "
-            else:
-                # print("found a title: {}".format(rows[1]))
-                title = rows[1]
+    for homework in homework_rows:
+        dato = homework.find("th").text
+        data = homework.find_all("td")
+        
+        aktivitet = data[0].find("a")['data-additionalinfo']
 
-        else:
-            # print("did not find any status")
-            status = " "
+        pattern = r'(Lektier|Note):\s+(.*?)(?=\n\n\w+:|\Z)'
+        matches = re.findall(pattern, aktivitet, re.DOTALL)
 
-            # Check if there is a title
-            if timeStructure.match(rows[0]):
-                # print("did not find a title")
-                title = " "
-            else:
-                # print("found a title: {}".format(rows[0]))
-                title = rows[0]
+        # Initialize variables for "Note" and "Lektier"
+        Note = ''
+        Lektier = ''
 
-        time = list(filter(timeStructure.match, rows))
-        team = list(filter(teamStructure.match, rows))
-        teacher = list(filter(teacherStructure.match, rows))
-        room = list(filter(roomStructure.match, rows))
+        # Extract the matched sections and store them in variables
+        for match in matches:
+            section_name, section_content = match
+            if section_name == 'Note':
+                Note = section_content.strip()
+            elif section_name == 'Lektier':
+                Lektier = section_content.strip()
+        
 
-        if len(time) == 0:
-            time = " "
-        else:
-            time = time[0]
 
-        if len(team) == 0:
-            team = " "
-        else:
-            team = team[0].split(":")[1].strip()
+        # Print the extracted "Note" and "Lektier"
+        time_match = re.search(r'(\d+:\d+) - (\d+:\d+)', aktivitet)
+        start_time, end_time = time_match.groups() if time_match else ('', '')
 
-        if len(teacher) == 0:
-            teacher = " "
-        else:
-            teacher = teacher[0].split(":")[1].strip()
+        team_match = re.search(r'Hold: (.+)', aktivitet)
+        team = team_match.group(1) if team_match else ''
 
-        if len(room) == 0:
-            room = " "
-        else:
-            room = room[0].split(":")[1].strip()
-
-        # .split(":")[2]
-        time_split = time.split(" ")
-        lektier[team] = {
-            "laerer": teacher,
-            "title": title,
-            "date": time_split[0],
-            "note": note.text,
-            "lektie": lektieinfo.text,
+        teacher_match = re.search(r'Lærer: (.+)', aktivitet)
+        teacher = teacher_match.group(1) if teacher_match else ''
+  
+        classroom_match = re.search(r'Lokale: (.+)', aktivitet)
+        classroom = classroom_match.group(1) if classroom_match else ''
+        
+        title = homework.find("div", {"class": "s2skemabrikcontent"}).text
+        
+        homework = {
+            title: {
+                "title": title,
+                "dato": dato,
+                "hold": team,
+                "lærer": teacher,
+                "lokale": classroom,
+                "start_tid": start_time,
+                "slut_tid": end_time,
+                "Note": Note,
+                "Lektier": Lektier,
+            }
         }
-    if len(lektier) == 0:
-        return "No homework found"
+        homework_json[dato].append(homework)
+        
     if to_json:
-        with open("homework.json", "w") as f:
-            json.dump(lektier, f, indent=4)
+        with open("homework.json", "w") as hw:
+            json.dump(homework_json, hw, indent=4)
+    return homework_json
 
-    return lektier
+
