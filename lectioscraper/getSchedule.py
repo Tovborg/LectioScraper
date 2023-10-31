@@ -68,7 +68,6 @@ def get_schedule(to_json, SchoolId, Session):
                     "note": note_section.strip()
                 }
             
-            # Print the parsed information
             else:
                 skema[team] = {
                     "status": status,

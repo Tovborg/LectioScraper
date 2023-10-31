@@ -4,7 +4,7 @@ import re
 import logging
 
 
-def get_all_homework(to_json, print_to_console, SchoolId, Session):
+def get_all_homework(to_json, SchoolId, Session):
     
     HOMEWORK_URL = "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx".format(SchoolId)
     homework = Session.get(HOMEWORK_URL)
@@ -96,6 +96,5 @@ def get_all_homework(to_json, print_to_console, SchoolId, Session):
     if to_json:
         with open("homework.json", "w") as f:
             json.dump(lektier, f, indent=4)
-    if print_to_console:
-        print(json.dumps(lektier, indent=4))
-    return "Saved homework to homework.json" if to_json else lektier
+
+    return lektier

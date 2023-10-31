@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import logging
 import re
 
+# import functions
 from lectioscraper.getSchedule import get_schedule
 from lectioscraper.getAbsence import get_absence
 from lectioscraper.getAllHomework import get_all_homework
@@ -82,6 +83,13 @@ class Lectio:
             "https://www.lectio.dk/lectio/" + self.SchoolId + "/forside.aspx"
         )
         soup = BeautifulSoup(dashboard.text, features="html.parser")
+        # Regex for studentId
+        elevId_pattern = re.compile(r'elevid=\d+')
+        elevid_mathes = soup.find_all(href=elevId_pattern)
+        if len(elevid_mathes) == 0:
+            raise LoginError("Login failed, please check your username and password.")
+        elevid_values = [re.search(r'elevid=(\d+)', match['href']).group(1) for match in elevid_mathes]
+        
         insitutionFind = soup.find("div", {"class": "ls-master-header-institution"})
         insitution = "  ".join(insitutionFind.text.split())
         
@@ -91,18 +99,14 @@ class Lectio:
         # remove one whitespace between the names
         insitution = insitution.replace("  ", " ")
         
-        student_laererIdFind = soup.find(
-            "a", {"id": "s_m_HeaderContent_subnavigator_ctl01"}, href=True
-        )
-        
-        if student_laererIdFind is None:
-            raise LoginError("Login failed, please check your username and password.")
-        
+        self.studentId = elevid_values[0]
         self.Session = session
 
     def getSchedule(self, to_json: bool):
-        # Fix in progress !!!
+        # NOTE: This works, but needs fine tuning
         # TODO: Make this function work for teachers
+        # TODO: Make this function work for other weeks than the current week
+        # TODO: Get more information about homework and notes
         # ! If you make any changes to this function, make sure it integrates with addToGoogleCalendar function
         """
         getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501
@@ -121,7 +125,7 @@ class Lectio:
         )
 
     def getAbsence(self, written_assignments: bool, to_json: bool):
-        # Fixed !!!
+        # NOTE: This works now
         # * ? Should I make this function work for teachers, since they can also see absence?
         # * ? I don't know how the layout is for teachers, so I don't know if it will work
         """
@@ -139,8 +143,9 @@ class Lectio:
             to_json=to_json,
         )
 
-    def getAllHomework(self, to_json: bool, print_to_console: bool):
-        # Fixed !!!
+    def getAllHomework(self, to_json: bool):
+        # NOTE: Needs reimplementation but works
+        # NOTE: The print_to_console parameter is not necessary, since you can just print the dictionary that is returned
         # * ? Should I make this function work for teachers, since they can also see homework?
         # ? I don't know how the layout is for teachers, so I don't know if it will work
         """
@@ -155,19 +160,14 @@ class Lectio:
         return get_all_homework(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            to_json=to_json,
-            print_to_console=print_to_console,
+            to_json=to_json
         )
 
     def getAssignments(
         self,
-        to_json=False,
-        team="alle hold",
-        status="alle status",
-        fravaer="",
-        karakter="",
+        save_to_json=False,
     ):
-        # Fixed !!!
+        # TODO: Add files and filters
         # * ? I know that the teachers can see assignments, but I don't know how the layout is for teachers, so I don't know if it will work
         # ? Should I make this function work for teachers, since they can also see assignments?
         """
@@ -184,32 +184,11 @@ class Lectio:
         return get_assignments(
             Session=self.Session,
             SchoolId=self.SchoolId,
-            to_json=to_json,
-            team=team,
-            status=status,
-            fravaer=fravaer,
-            karakter=karakter,
-        )
-
-    def getTodaysSchedule(self, to_json=True):
-        # Fixed !!!
-        # TODO: Make this function work for teachers
-        # * ? I know that the teachers can see the schedule, but I don't know how the layout is for teachers, so I don't know if it will work
-        """
-        Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over. # noqa: E501
-
-        :param to_json: If true, the schedule will be saved to a json file.
-
-        :return: The schedule for the current day.
-        """
-        return get_todays_schedule(
-            Session=self.Session,
-            SchoolId=self.SchoolId,
-            to_json=to_json,
+            save_to_json=save_to_json
         )
 
     def getMessages(self, save_to_json: bool = False):
-        # Needs to be fixed !!!
+        # NOTE: This has been fixed
         # TODO: Make this function work for teachers  
         # * I'm assuming teachers layout is the same as students, so it should work
         """
@@ -228,6 +207,7 @@ class Lectio:
         )
         
     def addToGoogleCalendar(self, CalendarID:str, user_type:str, weeks:int):
+        # NOTE: This doesn't work ATM
         # TODO: Make this function work for teachers
         # * ? I know that the teachers can see the schedule, but I don't know how the layout is for teachers, so I don't know if it will work
         # ! This function relies heavily on getSchedule, so if getSchedule doesn't work, this function won't work eithe

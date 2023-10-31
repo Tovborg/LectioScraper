@@ -1,198 +1,90 @@
 import json
 from bs4 import BeautifulSoup
 import logging
+import re
 
-
-def filterAssignments(assignment_end_result, team, status, fravaer, karakter=""):
-    filtered_assignments = {}
-    for i in assignment_end_result:
-        if (
-            team != "alle hold"
-            and status != "alle status"
-            and fravaer != ""
-            and karakter != ""
-        ):
-            if (
-                i["hold"] == team
-                and i["status"] == status
-                and i["fravaer"] == fravaer
-                and i["karakter"] == karakter
-            ):
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status != "alle status"
-            and fravaer != ""
-            and karakter == ""
-        ):
-            if i["hold"] == team and i["status"] == status and i["fravaer"] == fravaer:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status != "alle status"
-            and fravaer == ""
-            and karakter != ""
-        ):
-            if (
-                i["hold"] == team
-                and i["status"] == status
-                and i["karakter"] == karakter
-            ):
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status != "alle status"
-            and fravaer == ""
-            and karakter == ""
-        ):
-            if i["hold"] == team and i["status"] == status:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status == "alle status"
-            and fravaer != ""
-            and karakter != ""
-        ):
-            if (
-                i["hold"] == team
-                and i["fravaer"] == fravaer
-                and i["karakter"] == karakter
-            ):
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status == "alle status"
-            and fravaer != ""
-            and karakter == ""
-        ):
-            if i["hold"] == team and i["fravaer"] == fravaer:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status == "alle status"
-            and fravaer == ""
-            and karakter != ""
-        ):
-            if i["hold"] == team and i["karakter"] == karakter:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team != "alle hold"
-            and status == "alle status"
-            and fravaer == ""
-            and karakter == ""
-        ):
-            if i["hold"] == team:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status != "alle status"
-            and fravaer != ""
-            and karakter != ""
-        ):
-            if (
-                i["status"] == status
-                and i["fravaer"] == fravaer
-                and i["karakter"] == karakter
-            ):
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status != "alle status"
-            and fravaer != ""
-            and karakter == ""
-        ):
-            if i["status"] == status and i["fravaer"] == fravaer:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status != "alle status"
-            and fravaer == ""
-            and karakter != ""
-        ):
-            if i["status"] == status and i["karakter"] == karakter:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status != "alle status"
-            and fravaer == ""
-            and karakter == ""
-        ):
-            if i["status"] == status:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status == "alle status"
-            and fravaer != ""
-            and karakter != ""
-        ):
-            if i["fravaer"] == fravaer and i["karakter"] == karakter:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status == "alle status"
-            and fravaer != ""
-            and karakter == ""
-        ):
-            if i["fravaer"] == fravaer:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status == "alle status"
-            and fravaer == ""
-            and karakter != ""
-        ):
-            if i["karakter"] == karakter:
-                filtered_assignments[i["opgavetitel"]] = i
-        elif (
-            team == "alle hold"
-            and status == "alle status"
-            and fravaer == ""
-            and karakter == ""
-        ):
-            filtered_assignments[i["opgavetitel"]] = i
-    return filtered_assignments
-
-
-def get_assignments(
-    to_json, team, status, fravaer, karakter, Session, SchoolId
-):
-    ASSIGNMENT_URL = "https://www.lectio.dk/lectio/{}/OpgaverElev.aspx".format(SchoolId)
-    
-    assignments = Session.get(ASSIGNMENT_URL)
+def get_assignments(save_to_json, SchoolId, Session):
+    # Initiate session and soup
+    ASSIGNMENTS_URL = "https://www.lectio.dk/lectio/{}/OpgaverElev.aspx".format(SchoolId)
+    assignments = Session.get(ASSIGNMENTS_URL)
     soup = BeautifulSoup(assignments.text, features="html.parser")
-    assignment_table = soup.find(
-        "table", {"class": "ls-table-layout1 maxW textTop lf-grid"}
-    )
-    assignment_rows = assignment_table.findAll("tr")[1:]
-    assignment_end_result = []
-    assignments = {}
-    for i in assignment_rows:
-        td = i.findAll("td")
-        assignment = []
-        for j in td:
-            assignment.append(j.text)
-        assignment_dict = {
-            "uge": assignment[0],
-            "hold": assignment[1],
-            "opgavetitel": assignment[2].strip("\n"),
-            "frist": assignment[3],
-            "tid": assignment[3][-5:],
-            "elevtid": assignment[4],
-            "status": assignment[5],
-            "fravaer": assignment[6],
-            "afventer": assignment[7],
-            "opgavenote": assignment[8],
-            "karakter": assignment[9],
-            "elevnote": assignment[10],
+
+    assignments_table = soup.find("table", {"id": "s_m_Content_Content_ExerciseGV"})
+    assignments_rows = assignments_table.find_all("tr")[1:]
+
+    assignments_json = {}
+    for row in assignments_rows:
+        link = f"https://www.lectio.dk{row.find('a', {'title': 'Gå til opgaveafleveringssiden'})['href']}"
+        pattern = r"elevid=(\d+)&exerciseid=(\d+)&prevurl=([\w/.]+)"
+
+        match = re.search(pattern, link)
+
+        if match:
+            elevid = match.group(1)
+            exerciseid = match.group(2)
+            prevurl = match.group(3)
+        else:
+            print("No match found.")
+        
+        payload = {
+            "elevid": elevid,
+            "exerciseid": exerciseid,
+            "prevurl": prevurl
         }
 
-        assignment_end_result.append(assignment_dict)
+        assignment_session = Session.get(link, data=payload)
+        assignment_soup = BeautifulSoup(assignment_session.text, features="html.parser")
+        
+        # Assignment information
+        assignment_info = assignment_soup.find("table", {"class": "ls-std-table-inputlist"})
+        
+        # Assignment info cases
+        opgavetitel = assignment_info.find("th", text = 'Opgavetitel:').find_next_sibling("td").text if "Opgavetitel:" in assignment_info.text else "None"
+        opgavebeskrivelse = assignment_info.find("th", text = 'Opgavebeskrivelse:').find_next_sibling("td").text if "Opgavebeskrivelse:" in assignment_info.text else "None"
+        opgavenote = assignment_info.find("th", text = 'Opgavenote:').find_next_sibling("td").text if "Opgavenote:" in assignment_info.text else "None"
+        hold = assignment_info.find("th", text = 'Hold:').find_next_sibling("td").text if "Hold:" in assignment_info.text else "None"
+        karakterskala = assignment_info.find("th", text = 'Karakterskala:').find_next_sibling("td").text if "Karakterskala:" in assignment_info.text else "None"
+        ansvarlig = assignment_info.find("th", text = 'Ansvarlig:').find_next_sibling("td").text if "Ansvarlig:" in assignment_info.text else "None"
+        afleveringsfrist = assignment_info.find("th", text = 'Afleveringsfrist:').find_next_sibling("td").text if "Afleveringsfrist:" in assignment_info.text else "None"
+        i_undervisningsbeskrivelse = assignment_info.find("th", text = 'I undervisningsbeskrivelse:').find_next_sibling("td").text if "I undervisningsbeskrivelse:" in assignment_info.text else "None"
 
-    filtered = filterAssignments(assignment_end_result, team, status, fravaer, karakter)
-    if len(filtered) == 0:
-        return "Ingen opgaver fundet"
-    if to_json:
-        with open("assignments.json", "w") as file:
-            json.dump(filtered, file, indent=4)
+        afleverering_info = assignment_soup.find("div", {"id": "m_Content_ctl02_pa"})
+        aflevering_info_table = afleverering_info.find("table", {"id": "m_Content_StudentGV"})
+        aflevering_info_row = aflevering_info_table.find_all("tr")[1]
+        aflevering_info_data = aflevering_info_row.find_all("td")[1:]
+        
+        # Aflevering info
+        elev = aflevering_info_data[0].text
+        afventer = aflevering_info_data[1].text
+        status = aflevering_info_data[2].text.split("/")[0].strip()
+        fravaer = aflevering_info_data[2].text.split("/")[1].strip().split(" ")[1]
+        karakter = aflevering_info_data[4].text
+        karakternote = aflevering_info_data[5].text
+        elevnote = aflevering_info_data[6].text
 
-    return "Saved assignments to assignments.json" if to_json else filtered
+        # Json insertion
+        assignments_json[opgavetitel] = {
+            "opgavebeskrivelse": opgavebeskrivelse,
+            "opgavenote": opgavenote,
+            "hold": hold,
+            "karakterskala": karakterskala,
+            "ansvarlig": ansvarlig,
+            "afleveringsfrist": afleveringsfrist,
+            "i_undervisningsbeskrivelse": i_undervisningsbeskrivelse,
+            "elev": elev,
+            "afventer": afventer,
+            "status": status,
+            "fravaer": fravaer,
+            "karakter": karakter,
+            "karakternote": karakternote,
+            "elevnote": elevnote
+        }
+    if save_to_json:
+        with open("assignments.json", "w") as f:
+            json.dump(assignments_json, f, indent=4)
+    return assignments_json
+       
+        
+        
+
+

@@ -46,4 +46,4 @@ def get_absence(to_json: bool, SchoolId: str, Session, written_assignments: bool
     if len(absence_end_result) == 0:
         return "No absence found"
 
-    return "Saved absence to absence.json" if to_json else absence_end_result
+    return absence_end_result
