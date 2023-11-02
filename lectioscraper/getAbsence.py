@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import json
 
 
-def get_absence(to_json: bool, SchoolId: str, Session, written_assignments: bool):
+def get_absence(save_to_json: bool, SchoolId: str, Session, written_assignments: bool):
     # The URL used for retrieving absence. Note: Might change over time
     ABSENCE_URL = "https://www.lectio.dk/lectio/{}/subnav/fravaerelev.aspx".format(SchoolId)
     
@@ -40,10 +40,8 @@ def get_absence(to_json: bool, SchoolId: str, Session, written_assignments: bool
                     },
                 }
 
-    if to_json == True:
+    if save_to_json:
         with open("absence.json", "w") as outfile:
             json.dump(absence_end_result, outfile, indent=4)
-    if len(absence_end_result) == 0:
-        return "No absence found"
 
     return absence_end_result
