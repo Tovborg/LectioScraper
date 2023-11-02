@@ -73,10 +73,11 @@
   <section id="welcome-to-lectioscraper-s-documentation">
 <h1>Welcome to LectioScraper’s documentation!<a class="headerlink" href="#welcome-to-lectioscraper-s-documentation" title="Permalink to this heading"></a></h1>
 <img alt="_images/twitter_header_photo_2.png" class="align-left" src="_images/twitter_header_photo_2.png" />
-<p>LectioScraper is a python package for helping you scrape lectio.dk with ease. It uses requests for the actual scraping and beautifulsoup for parsing the html. Scraping lectio.dk can be a tedious task, as it requires so much different html elements to be parsed. and lectio is a big website so there are a lot of different pages to scrape. Here you have everything configured and all you need to do is to import lectioscraper and start scraping (see the whole documentation below).</p>
+<p>LectioScraper is a python package for helping you scrape lectio.dk with ease. It uses requests for the actual scraping and beautifulsoup for parsing the html. Scraping lectio.dk can be a tedious task, as it requires so many different html elements to be parsed. and lectio is a big website so there are a lot of different pages to scrape. Here you have everything configured and all you need to do is to import lectioscraper and start scraping (see the whole documentation below).</p>
 </section>
 <section id="getting-help">
 <h1>Getting help<a class="headerlink" href="#getting-help" title="Permalink to this heading"></a></h1>
+<p>Maintaining a project like this is quite difficult because lectio.dk doesn't stay the same, and therefore it needs to be updated quite often. If you're familiar with webscraping and BS4 you're welcome to fork the project and open a PR for the fix, else you can contact me at the links below and I'll post a fix ASAP</p>
 <p>If you have any problems with the documentation or with the code, please feel free to contact me on my email, discord or open an issue on github. (see below).</p>
 <p>e-mail: <span class="raw-html"><a href="mailto: emil@tovborg-jensen.dk">emil@tovborg-jensen.dk</a></span>
 <span class="raw-html"><br></span>
@@ -133,32 +134,14 @@ Init is not to be used directly, but is used when you create an instance of the 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="lectioscraper.Lectio.addToGoogleCalendar">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">addToGoogleCalendar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CalendarID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weeks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.addToGoogleCalendar" title="Permalink to this definition"></a></dt>
-<dd><p>Adds the schedule for the current week to a Google Calendar. Accesses your calendar using OAuth2.0.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>CalendarID</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The ID of the calendar you want to add the schedule to.</p></li>
-<li><p><strong>user_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The type of user, either ‘elev’ or ‘laerer’.</p></li>
-<li><p><strong>weeks</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of weeks you want to add to the calendar. (starting from the current week)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Adds the schedule for the current week to a Google Calendar.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAbsence">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAbsence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">written_assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAbsence" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAbsence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">written_assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAbsence" title="Permalink to this definition"></a></dt>
 <dd><p>getAbsence gets the absence for the student for the whole year. If writing is true, the function will also scrape your absence for written assignments. If to_json is true, the absence will be saved to a json file called absence.json. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>written_assignments</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the absence for written assignments will be scraped.</p></li>
-<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the absence will be saved to a json file called absence.json</p></li>
+<li><p><strong>save_to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the absence will be saved to a json file called absence.json</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -169,14 +152,11 @@ Init is not to be used directly, but is used when you create an instance of the 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAllHomework">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAllHomework</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAllHomework" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAllHomework</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAllHomework" title="Permalink to this definition"></a></dt>
 <dd><p>getAllHomework scrapes all the homework in the ‘lektier’ tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the homework will be saved to a json file called homework.json.</p></li>
-<li><p><strong>print_to_console</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the homework will be printed to the console.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>save_to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – if true, the homework will be saved to a json file called homework.json.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>returns all the homework in the ‘lektier’ either as a json file or as a dictionary.</p>
@@ -186,68 +166,30 @@ Init is not to be used directly, but is used when you create an instance of the 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getAssignments">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAssignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">team</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">hold'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alle</span> <span class="pre">status'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fravaer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">karakter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAssignments" title="Permalink to this definition"></a></dt>
-<dd><p>getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments. # noqa: E501</p>
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getAssignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getAssignments" title="Permalink to this definition"></a></dt>
+<dd><p>getAssignments scrapes all your current assignments, in the “Afleveringer” tab, and saves them to a json file called assignments.json if save_to_json is true. else it just returns the assignments.json file
+:param save_to_json: if true, the assignments will be saved to a json file called assignments.json.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>to_json</strong> – if true, the assignments will be saved to a json file called assignments.json.</p></li>
-<li><p><strong>team</strong> – the team you want to filter the assignments by. Example: 1g/3 EnB (english with team 1g/3), the filters will be updated soon as it’s complicated atm.</p></li>
-<li><p><strong>status</strong> – the status you want to filter the assignments by. Example: Venter, Afleveret, Mangler</p></li>
-<li><p><strong>fravaer</strong> – the absence you want to filter the assignments by. Example: 100% fravær, 50% fravær, 0% fravær</p></li>
-<li><p><strong>karakter</strong> – the grade you want to filter the assignments by. Example: 12, 10, 7, 4, 02, 00, -3</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>returns all the assignments in the ‘afleveringer’ either as a json file or as a dictionary.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>returns all the assignments in the ‘afleveringer’ either as a json file or as a dictionary.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lectioscraper.Lectio.getSchedule">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getSchedule" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">week</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getSchedule" title="Permalink to this definition"></a></dt>
 <dd><p>getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If true, the schedule will be saved to a json file.</p></li>
-<li><p><strong>print_to_console</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If true, the schedule will be printed to the console.</p></li>
+<li><p><strong>save_to_json</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If true, the schedule will be saved to a json file.</p></li>
+<li><p><strong>week</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The week number of the schedule you want to scrape.</p></li>
+<li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The year of the schedule you want to scrape.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>if to_json is true, the schedule will be saved to a json file. If to_json is false, the schedule will be returned. If print_to_console is true, the schedule will be printed to the console.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lectioscraper.Lectio.getTodaysSchedule">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getTodaysSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getTodaysSchedule" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the schedule for the current day, the current day is found using the datetime module, working on choosing the next day if the current school day is over. # noqa: E501</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>to_json</strong> – If true, the schedule will be saved to a json file.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The schedule for the current day.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lectioscraper.Lectio.getUnreadMessages">
-<span class="sig-prename descclassname"><span class="pre">lectioscraper.Lectio.</span></span><span class="sig-name descname"><span class="pre">getUnreadMessages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lectioscraper.Lectio.getUnreadMessages" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the unread messages for the current user. # noqa: E501</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>to_json</strong> – If true, the messages will be saved to a json file.</p></li>
-<li><p><strong>get_content</strong> – If true, the content of the messages will be returned aka the message body.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Returns the unread messages for the current user, if get_content is true, the message body will be returned too</p>
+<dd class="field-even"><p>returns the schedule for the current week unless else is specified. If save_to_json is true, the schedule will be saved to a json file called schedule.json.</p>
 </dd>
 </dl>
 </dd></dl>

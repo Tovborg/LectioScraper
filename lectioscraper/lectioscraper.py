@@ -106,6 +106,10 @@ class Lectio:
         getSchedule gets the schedule for the current week. Currently only works for the current week. # noqa: E501
 
         :param save_to_json: If true, the schedule will be saved to a json file.
+        :param week: The week number of the schedule you want to scrape.
+        :param year: The year of the schedule you want to scrape.
+
+        :return: returns the schedule for the current week unless else is specified. If save_to_json is true, the schedule will be saved to a json file called schedule.json.
 
         """
 
@@ -145,7 +149,6 @@ class Lectio:
         getAllHomework scrapes all the homework in the 'lektier' tab, currently there are no filters but scrapes all the homework for all classes, basically scrapes all the homework data that there is on the tab. # noqa: E501
 
         :param save_to_json: if true, the homework will be saved to a json file called homework.json.
-        :param print_to_console: if true, the homework will be printed to the console.
 
         :return: returns all the homework in the 'lektier' either as a json file or as a dictionary.
 
@@ -162,13 +165,8 @@ class Lectio:
     ):
         # TODO: Add files and filters
         """
-        getAssignments scrapes all your current assignments, this function actually has filters implemented so you can filter the assignments you want to see. Make sure to use the correct filters, otherwise you will get all the assignments. # noqa: E501
-
-        :param to_json: if true, the assignments will be saved to a json file called assignments.json.
-        :param team: the team you want to filter the assignments by. Example: 1g/3 EnB (english with team 1g/3), the filters will be updated soon as it's complicated atm.
-        :param status: the status you want to filter the assignments by. Example: Venter, Afleveret, Mangler
-        :param fravaer: the absence you want to filter the assignments by. Example: 100% fravær, 50% fravær, 0% fravær
-        :param karakter: the grade you want to filter the assignments by. Example: 12, 10, 7, 4, 02, 00, -3
+        getAssignments scrapes all your current assignments, in the "Afleveringer" tab, and saves them to a json file called assignments.json if save_to_json is true. else it just returns the assignments.json file
+        :param save_to_json: if true, the assignments will be saved to a json file called assignments.json.
 
         :return: returns all the assignments in the 'afleveringer' either as a json file or as a dictionary.
         """
@@ -183,10 +181,10 @@ class Lectio:
         # TODO: Make this function work for teachers  
         # * I'm assuming teachers layout is the same as students, so it should work
         """
-        Returns the unread messages for the current user. # noqa: E501
+        Returns the messages in the "Beskeder" tab. If save_to_json is true, the messages will be saved to a json file called messages.json. #
 
-        :param to_json: If true, the messages will be saved to a json file.
-        :param get_content: If true, the content of the messages will be returned aka the message body.
+        :param save_to_json: If true, the messages will be saved to a json file.
+        
 
         :return: Returns the unread messages for the current user, if get_content is true, the message body will be returned too
         """
