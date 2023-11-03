@@ -177,7 +177,7 @@ class Lectio:
         # TODO: Make this function work for teachers  
         # * I'm assuming teachers layout is the same as students, so it should work
         """
-        Returns the messages in the "Beskeder" tab. If save_to_json is true, the messages will be saved to a json file called messages.json. #
+        Returns the messages in the "Beskeder" tab. If save_to_json is true, the messages will be saved to a json file called messages.json. 
 
         :param save_to_json: If true, the messages will be saved to a json file.
         

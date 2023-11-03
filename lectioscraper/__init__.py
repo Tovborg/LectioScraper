@@ -7,7 +7,6 @@ from lectioscraper.getAssignments import get_assignments
 from lectioscraper.getMessages import getMessages
 
 # Exceptions
-from lectioscraper.exceptions import ElementNotFoundError
 
 # export all function inside the Lectio class
-__all__ = ['Lectio', 'get_schedule', 'get_absence', 'get_all_homework', 'get_assignments', 'getMessages', 'ElementNotFoundError']
+__all__ = ['Lectio', 'get_schedule', 'get_absence', 'get_all_homework', 'get_assignments', 'getMessages']
