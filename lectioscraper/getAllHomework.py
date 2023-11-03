@@ -4,18 +4,31 @@ import re
 import logging
 from collections import defaultdict
 
+# Exceptions
+from lectioscraper.exceptions import ElementNotFoundError, RequestError
+
 def get_all_homework(save_to_json, SchoolId, Session):
     # NOTE: Might change in the future
     HOMEWORK_URL = "https://www.lectio.dk/lectio/{}/material_lektieoversigt.aspx".format(SchoolId)
 
     homework = Session.get(HOMEWORK_URL)
+    if homework.status_code != 200:
+        raise RequestError(HOMEWORK_URL)
     soup = BeautifulSoup(homework.text, features="html.parser")
+    if soup is None:
+        raise ElementNotFoundError("soup")
 
     # Finds the table containing all the homework
     homework_table = soup.find("table", {"id": "s_m_Content_Content_MaterialLektieOverblikGV"})
-    # Stores each row in a list
-    homework_rows = homework_table.find_all("tr")[1:]
+    if homework_table is None:
+        raise ElementNotFoundError("table", "s_m_Content_Content_MaterialLektieOverblikGV")
 
+    # Stores each row in a list
+    try:
+        homework_rows = homework_table.find_all("tr")[1:]
+    except IndexError:
+        raise ElementNotFoundError("rows")
+        
     # Stores each value in a list fx. "fr 3/11": []
     homework_json = defaultdict(list)
 
@@ -23,9 +36,11 @@ def get_all_homework(save_to_json, SchoolId, Session):
     for homework in homework_rows:
         
         data = homework.find_all("td")
+        if len(data) == 0:
+            raise ElementNotFoundError("table data")
         dato = data[0].text
         aktivitet = data[1].find("a")['data-additionalinfo']
-
+        
         pattern = r'(Lektier|Note):\s+(.*?)(?=\n\n\w+:|\Z)'
         matches = re.findall(pattern, aktivitet, re.DOTALL)
 
@@ -53,7 +68,11 @@ def get_all_homework(save_to_json, SchoolId, Session):
         classroom_match = re.search(r'Lokale: (.+)', aktivitet)
         classroom = classroom_match.group(1) if classroom_match else ''
         
-        title = homework.find("div", {"class": "s2skemabrikcontent"}).text
+        title_div = homework.find("div", {"class": "s2skemabrikcontent"})
+        if title_div is None:
+            raise ElementNotFoundError("div", "s2skemabrikcontent")
+        title = title_div.text.strip()
+        
         
         homework = {
             title: {

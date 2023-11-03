@@ -5,6 +5,9 @@ import json
 # Get current year
 from datetime import datetime
 from collections import defaultdict
+# Exceptions
+from lectioscraper.exceptions import ElementNotFoundError, RequestError, LectioLayoutChangeError
+
 
 def get_schedule(save_to_json:bool, SchoolId, Session, year:int=None, week:int=None):
 
@@ -19,11 +22,18 @@ def get_schedule(save_to_json:bool, SchoolId, Session, year:int=None, week:int=N
     SCHEDULE_URL = "https://www.lectio.dk/lectio/{}/SkemaNy.aspx?week={}{}".format(SchoolId, week, year)
 
     schedule = Session.get(SCHEDULE_URL)
+    if schedule.status_code != 200:
+        raise RequestError(SCHEDULE_URL)
 
     soup = BeautifulSoup(schedule.text, features="html.parser")
 
     day_rows = soup.find_all("div", {"class": "s2skemabrikcontainer lec-context-menu-instance"})
+    if len(day_rows) == 0:
+        raise LectioLayoutChangeError("schedule", "Lectio layout has changed its layout on the schedule page, the code needs to be updated.")
+    
     date_rows = soup.find("tr", {"class": "s2dayHeader"})
+    if date_rows is None:
+        raise ElementNotFoundError("tr", "s2dayHeader")
     dates = [date.text.strip() for date in date_rows.find_all("td")][1:] # remove first element
     print(dates)
 
@@ -33,11 +43,15 @@ def get_schedule(save_to_json:bool, SchoolId, Session, year:int=None, week:int=N
     for index, day_row in enumerate(day_rows):
         skemabrikker = day_row.find_all("a", {"class": "s2skemabrik"})
 
+
         skema = defaultdict(list)
         
         for brik in skemabrikker:
             
-            input_string = brik['data-additionalinfo']
+            try:
+                input_string = brik['data-additionalinfo']
+            except KeyError:
+                raise ElementNotFoundError("a", "data-additionalinfo")
             if "Lokale:" in input_string:
                 lokale_pattern = r"Lokale: (.+)"
             elif "Lokaler:" in input_string:

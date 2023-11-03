@@ -13,15 +13,10 @@ from lectioscraper.getTodaysSchedule import get_todays_schedule
 from lectioscraper.getMessages import getMessages
 
 # exceptions
-
-class LoginError(Exception):
-    """Raised when login fails"""
+from lectioscraper.exceptions import ElementNotFoundError, LoginError
 
 
 
-class ServerError(Exception):
-    # ! Need to figure out how to determine if this is a server error or a login error
-    """Raised when server returns an error"""
 
 # main class
 
@@ -166,6 +161,7 @@ class Lectio:
         # TODO: Add files and filters
         """
         getAssignments scrapes all your current assignments, in the "Afleveringer" tab, and saves them to a json file called assignments.json if save_to_json is true. else it just returns the assignments.json file
+        
         :param save_to_json: if true, the assignments will be saved to a json file called assignments.json.
 
         :return: returns all the assignments in the 'afleveringer' either as a json file or as a dictionary.

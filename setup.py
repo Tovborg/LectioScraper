@@ -4,8 +4,8 @@ import os
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-VERSION = '0.0.8.1'
-DESCRIPTION = 'A simple python package to scrape useful data from Lectio.dk'
+VERSION = '3.0.0'
+DESCRIPTION = 'A python package to scrape useful data from Lectio.dk'
 
 # Setting up
 # find_packages() finds all the packages in the current directory s

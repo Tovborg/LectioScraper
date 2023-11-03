@@ -1,14 +1,18 @@
 .. LectioScraper documentation master file, created by
-   sphinx-quickstart on Fri Aug 19 23:17:27 2022.
+   sphinx-quickstart on Thu Nov  2 17:38:48 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 Welcome to LectioScraper's documentation!
 =========================================
 
-
 .. image:: twitter_header_photo_2.png
    :align: left
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
 
 LectioScraper is a python package for helping you scrape lectio.dk with ease. It uses requests for the actual scraping and beautifulsoup for parsing the html. Scraping lectio.dk can be a tedious task, as it requires so much different html elements to be parsed. and lectio is a big website so there are a lot of different pages to scrape. Here you have everything configured and all you need to do is to import lectioscraper and start scraping (see the whole documentation below).
 
@@ -20,6 +24,10 @@ LectioScraper is a python package for helping you scrape lectio.dk with ease. It
 
 Getting help
 ==============
+Maintaining a package like this is a lot of work, because lectio.dk always changes and breaks the code. And therefore I can't guarantee that the code will work 100% of the time, but reach out if you have a problem and I'll fix it ASAP.
+
+If you're familiar with BS4 and webscraping it should be pretty easy to implement a fix yourself, and I would love to see a pull request with your fix.
+
 If you have any problems with the documentation or with the code, please feel free to contact me on my email, discord or open an issue on github. (see below).
 
 e-mail: :raw-html:`<a href="mailto: emil@tovborg-jensen.dk">emil@tovborg-jensen.dk</a>`
@@ -90,10 +98,3 @@ You can find the full license text either in the LICENSE file or on the followin
       :raw-html:`<a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public License v3.0</a>`
    
    
-
-
-
-   
-
-
-
