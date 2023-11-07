@@ -1,3 +1,4 @@
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -8,7 +9,9 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
+
 package_path = os.path.abspath('../..')
+
 os.environ['PYTHONPATH'] = ':'.join((package_path, os.environ.get('PYTHONPATH', '')))
 
 project = 'lectioscraper'
