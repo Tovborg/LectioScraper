@@ -78,7 +78,7 @@ Usage
 ============
 
 .. automodule:: lectioscraper.Lectio
-   :members: __init__, getSchedule, getAbsence, getAllHomework, getAssignments, getMessages
+   :members:
 
 
 Authors
