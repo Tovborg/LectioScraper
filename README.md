@@ -1,7 +1,7 @@
 
 # LectioScraper
 
-NOTE: Due to lack of time and constant changes from the Lectio team I have chosen to stop maintaining this project. I haven't tested it but I am almost 99% sure that this package doesn't work anymore since Lection have gone to different user authorization methods (MitID), and the username and password method is deprecated. If you're up for the challenge you're welcome to fork the project and work out a method to make it work again, and I would be happy to dedicate a few hours to help you.
+NOTE: Due to lack of time and constant changes from the Lectio team I have chosen to stop maintaining this project. I haven't tested it but I am almost 99% sure that this package doesn't work anymore since Lectio have gone to different user authorization methods (MitID), and the username and password method is deprecated. If you're up for the challenge you're welcome to fork the project and work out a method to make it work again, and I would be happy to dedicate a few hours to help you.
 
 LectioScraper is a python package for helping you scrape lectio.dk with ease. It uses requests for the actual scraping and beautifulsoup for parsing the html. Scraping lectio.dk can be a tedious task, as it requires so much different html elements to be parsed. and lectio is a big website so there are a lot of different pages to scrape. Here you have everything configured and all you need to do is to import lectioscraper and start scraping (see the whole documentation below).
 
